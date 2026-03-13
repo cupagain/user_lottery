@@ -25,6 +25,9 @@
             background: radial-gradient(circle at 50% 0%, #1a1a2e 0%, #050505 100%);
             color: #ffffff;
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            /* 提升字體清晰度與抗鋸齒 */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             min-height: 100vh;
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
             padding: 20px 15px; margin: 0; overflow-x: hidden;
@@ -38,159 +41,133 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.8); position: relative;
         }
 
-        /* --- 右上角選單 (移入卡片內部防擋標題) --- */
         .lang-control { position: absolute; top: 20px; right: 20px; z-index: 50; }
         .lang-select { background: rgba(0, 0, 0, 0.85); border: 1px solid var(--gold-dark); color: var(--gold-primary); padding: 6px 24px 6px 10px; border-radius: 8px; font-size: 11px; font-weight: bold; appearance: none; cursor: pointer; outline: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23bf953f' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 6px center; }
 
-        /* --- 標題 --- */
         .title-prestige {
             font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em;
             background: linear-gradient(to bottom, #ffffff 0%, var(--gold-light) 40%, var(--gold-primary) 70%, var(--gold-dark) 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-align: center; font-size: clamp(1.8rem, 7vw, 3.2rem);
-            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.8));
+            text-align: center; font-size: clamp(1.8rem, 7vw, 3rem);
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.8));
             margin-top: 15px; margin-bottom: 12px;
             white-space: nowrap; word-break: keep-all;
         }
 
-        /* --- 帳號資訊區塊 --- */
+        /* 季賽標籤 */
+        .quarterly-tag {
+            color: #fcf6ba; font-size: 12px; font-weight: 900; letter-spacing: 1px;
+            background: linear-gradient(90deg, transparent, rgba(191,149,63,0.3), transparent);
+            padding: 6px 20px; margin-bottom: 20px; text-align: center; display: inline-block;
+        }
+
         .user-profile-card {
             background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(191, 149, 63, 0.3);
             border-radius: 20px; padding: 18px 20px; display: flex; flex-direction: column; align-items: center;
-            margin-bottom: 25px; box-shadow: inset 0 0 20px rgba(191, 149, 63, 0.1); width: 100%; max-width: 320px; margin-left: auto; margin-right: auto;
+            margin-bottom: 30px; box-shadow: inset 0 0 20px rgba(191, 149, 63, 0.1); width: 100%; max-width: 320px; margin-left: auto; margin-right: auto;
         }
-        .level-badge { 
-            background: linear-gradient(135deg, var(--gold-light), var(--gold-dark)); 
-            color: #000; font-weight: 900; padding: 2px 8px; border-radius: 6px; font-size: 15px; margin-left: 4px;
-        }
-        .status-badge { 
-            font-size: 14px; font-weight: 900; padding: 6px 16px; border-radius: 50px; margin-top: 12px; 
-            border: 1px solid #ffffff33; letter-spacing: 1px; white-space: nowrap; text-align: center;
-        }
+        .level-badge { background: linear-gradient(135deg, var(--gold-light), var(--gold-dark)); color: #000; font-weight: 900; padding: 2px 8px; border-radius: 6px; font-size: 15px; margin-left: 4px; }
+        .status-badge { font-size: 14px; font-weight: 900; padding: 6px 16px; border-radius: 50px; margin-top: 12px; border: 1px solid #ffffff33; letter-spacing: 1px; white-space: nowrap; text-align: center; }
         .status-eligible { background: rgba(16, 185, 129, 0.15); color: var(--success-green); border-color: var(--success-green); }
         
-        /* 升級 CTA 按鈕 (無紅X，直接引導) */
+        /* 升級引導 CTA */
+        .upgrade-wrapper { display: none; text-align: center; margin-top: 10px; }
+        .upgrade-msg { color: #aaa; font-size: 12px; font-weight: 700; margin-bottom: 6px; }
         .upgrade-cta {
-            display: none; margin-top: 12px; padding: 10px 24px; border-radius: 50px;
+            display: inline-block; padding: 8px 24px; border-radius: 50px;
             background: linear-gradient(90deg, #bf953f, #fcf6ba, #bf953f); background-size: 200% auto; color: #000;
             font-size: 14px; font-weight: 900; letter-spacing: 1px; text-decoration: none;
-            box-shadow: 0 0 15px rgba(191, 149, 63, 0.5); animation: goldShine 3s linear infinite;
-            white-space: nowrap; text-align: center; border: 1px solid #fff;
+            box-shadow: 0 0 15px rgba(191, 149, 63, 0.4); animation: goldShine 3s linear infinite;
         }
         @keyframes goldShine { to { background-position: 200% center; } }
 
-        /* --- 皇冠 智慧定位 --- */
-        #crown {
-            position: absolute; width: 45px; height: 45px;
-            z-index: 500; filter: drop-shadow(0 0 15px var(--gold-primary));
-            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); display: none; pointer-events: none;
-        }
-
-        /* --- 隱藏大獎 (iPhone) --- */
-        .legendary-card {
-            position: relative; background: #050505; border-radius: 30px;
-            padding: 2px; overflow: hidden; margin-bottom: 30px;
-        }
-        .legendary-card::before {
-            content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: conic-gradient(transparent, var(--gold-primary) 25%, var(--gold-light) 26%, var(--gold-primary) 27%, transparent 35%);
-            animation: laserRotate 4s linear infinite;
-        }
-        .legendary-inner {
-            position: relative; z-index: 10; background: radial-gradient(circle at 50% 40%, rgba(191, 149, 63, 0.3) 0%, #0a0a0a 85%);
-            border-radius: 28px; padding: 30px 20px; text-align: center;
-        }
-        @keyframes laserRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        
+        .prize-container { margin-bottom: 25px; }
         .img-container { position: relative; display: flex; justify-content: center; align-items: center; margin-bottom: 12px; }
         .bg-glow { position: absolute; width: 70%; height: 70%; background: radial-gradient(circle, rgba(191,149,63,0.3) 0%, transparent 70%); z-index: 1; pointer-events: none; }
-        .iphone-img { width: 110px; height: auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.9)); position: relative; z-index: 2; object-fit: contain; }
-        .prize-img { width: 120px; height: 120px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8)); position: relative; z-index: 2; object-fit: contain; }
+        .prize-img { width: 120px; height: 120px; filter: drop-shadow(0 8px 15px rgba(0,0,0,0.8)); position: relative; z-index: 2; object-fit: contain; }
+        .prize-title { font-size: 20px; font-weight: 900; color: #fff; letter-spacing: 1px; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
 
-        /* 活動規則框 */
-        .rule-box {
-            background: rgba(255, 255, 255, 0.05); border: 1px dashed rgba(191, 149, 63, 0.4);
-            padding: 24px 20px; border-radius: 20px; margin-top: 35px;
-        }
-        .rule-item { color: #e2e8f0 !important; font-weight: 500; line-height: 1.7; font-size: 13px; text-shadow: 0 1px 2px rgba(0,0,0,0.8); word-break: break-word; }
-
-        /* 進度條 (完美修復交接處) */
-        .progress-wrapper { position: relative; margin: 50px 0 30px 0; }
-        .progress-container { height: 56px; background: #0a0a0a; border-radius: 28px; border: 1px solid rgba(255, 255, 255, 0.15); display: flex; overflow: hidden; position: relative; box-shadow: inset 0 5px 15px rgba(0,0,0,0.8);}
+        .progress-wrapper { position: relative; margin: 30px 0 25px 0; }
+        .progress-container { height: 50px; background: #0a0a0a; border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.15); display: flex; overflow: hidden; position: relative; box-shadow: inset 0 5px 15px rgba(0,0,0,0.8);}
         .bar-a { background: linear-gradient(90deg, #800, var(--accent-red)); transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; align-items: center; justify-content: center; }
         .bar-b { background: linear-gradient(90deg, var(--accent-blue), #003366); transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; align-items: center; justify-content: center; }
-        .percent-text { font-weight: 900; font-size: 1.6rem; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.9); }
-        
-        /* 圓形 VS 標籤完美遮蓋縫隙 */
-        .vs-label { 
-            position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); 
-            color: #fcf6ba; font-weight: 900; font-size: 13px; z-index: 10; 
-            background: #0d0d0d; width: 38px; height: 38px; border-radius: 50%; 
-            display: flex; justify-content: center; align-items: center;
-            border: 2px solid var(--gold-primary); box-shadow: 0 0 15px rgba(0,0,0,0.9);
-        }
+        .percent-text { font-weight: 900; font-size: 1.4rem; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.9); }
+        .vs-label { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: #fcf6ba; font-weight: 900; font-size: 13px; z-index: 10; background: #0d0d0d; width: 34px; height: 34px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 2px solid var(--gold-primary); box-shadow: 0 0 10px rgba(0,0,0,0.9); }
 
-        /* 按鈕樣式 (防斷行) */
-        .btn-premium { border-radius: 18px; font-weight: 900; font-size: 14px; letter-spacing: 1px; transition: 0.3s; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); white-space: nowrap; word-break: keep-all; padding: 16px 10px; }
+        .btn-premium { border-radius: 16px; font-weight: 900; font-size: 15px; letter-spacing: 1px; transition: 0.3s; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); white-space: nowrap; word-break: keep-all; padding: 18px 10px; }
         .btn-a-red { background: linear-gradient(145deg, #400, #100); color: #ff9999; }
-        .btn-a-red:hover:not(:disabled) { background: var(--accent-red); color: #fff; box-shadow: 0 0 25px rgba(255, 45, 85, 0.5); transform: translateY(-2px); }
+        .btn-a-red:hover:not(:disabled) { background: var(--accent-red); color: #fff; box-shadow: 0 0 20px rgba(255, 45, 85, 0.5); transform: translateY(-2px); }
         .btn-b-blue { background: linear-gradient(145deg, #001d4d, #000a1a); color: #99c2ff; }
-        .btn-b-blue:hover:not(:disabled) { background: var(--accent-blue); color: #fff; box-shadow: 0 0 25px rgba(0, 122, 255, 0.5); transform: translateY(-2px); }
+        .btn-b-blue:hover:not(:disabled) { background: var(--accent-blue); color: #fff; box-shadow: 0 0 20px rgba(0, 122, 255, 0.5); transform: translateY(-2px); }
         .btn-locked { opacity: 0.4; cursor: not-allowed; filter: grayscale(0.8); }
         .btn-active-voted { opacity: 1 !important; border-color: var(--gold-light); box-shadow: inset 0 0 20px rgba(191,149,63,0.5); filter: none !important; color: #fff;}
 
-        /* 皇冠錨點 */
-        #anchor-a { position: absolute; top: -40px; left: -20px; } 
-        #anchor-b { position: absolute; top: -40px; right: -20px; } 
+        /* 隱藏獎項 banner (移到按鈕下方) */
+        .hidden-prize-banner {
+            background: linear-gradient(90deg, rgba(191, 149, 63, 0.1), rgba(191, 149, 63, 0.2), rgba(191, 149, 63, 0.1));
+            border: 1px solid rgba(191, 149, 63, 0.3); border-radius: 16px; padding: 16px;
+            margin-top: 35px; text-align: center;
+        }
+        .hp-title { color: #fcf6ba; font-weight: 900; font-size: 14px; margin-bottom: 6px; letter-spacing: 1px; }
+        .hp-desc { color: #ddd; font-size: 13px; font-weight: 700; line-height: 1.6; }
+        .hp-highlight { color: #ff2d55; }
 
-        /* 確認彈窗 */
-        #voteModal { display: none; position: fixed; inset: 0; z-index: 10000; background: rgba(0, 0, 0, 0.96); backdrop-filter: blur(10px); align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity 0.3s ease; }
+        .rule-box { background: rgba(255, 255, 255, 0.05); border: 1px dashed rgba(191, 149, 63, 0.4); padding: 24px 20px; border-radius: 16px; margin-top: 35px; }
+        .rule-item { color: #cbd5e1 !important; font-weight: 500; line-height: 1.7; font-size: 12px; }
+
+        /* 客製化彈窗 (取代 Alert) */
+        #customMsg { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 20000; background: #0a0a0a; border: 1px solid var(--gold-primary); color: #fff; padding: 12px 24px; border-radius: 50px; font-weight: 900; font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); opacity: 0; transition: opacity 0.3s; white-space: nowrap; }
+        #customMsg.show { display: block; opacity: 1; }
+
+        #voteModal { display: none; position: fixed; inset: 0; z-index: 10000; background: rgba(0, 0, 0, 0.96); backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity 0.3s ease; }
         #voteModal.show { display: flex; opacity: 1; }
-        .modal-content { background: #0d0d0d; border: 2px solid var(--gold-primary); border-radius: 28px; padding: 35px 25px; max-width: 360px; width: 100%; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+        .modal-content { background: #0d0d0d; border: 2px solid var(--gold-primary); border-radius: 24px; padding: 35px 25px; max-width: 340px; width: 100%; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
 
-        .web-footer { max-width: 600px; width: 100%; margin-top: 30px; padding-bottom: 40px; text-align: center; font-size: 11px; color: rgba(255,255,255,0.4); line-height: 1.6; }
+        .web-footer { max-width: 600px; width: 100%; margin-top: 30px; padding-bottom: 40px; text-align: center; font-size: 11px; color: rgba(255,255,255,0.3); line-height: 1.6; }
     </style>
 </head>
 <body>
 
-    <svg id="crown" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M5 21H19V19H5V21ZM5 17H19V11L15 13L12 7L9 13L5 11V17ZM12 5C13.1046 5 14 4.10457 14 3C14 1.89543 13.1046 1 12 1C10.8954 1 10 1.89543 10 3C10 4.10457 10.8954 5 12 5Z" fill="#ffb100"/>
-    </svg>
+    <div id="customMsg">系統訊息</div>
+
+    <div class="lang-control">
+        <select class="lang-select" onchange="changeLang(this.value)" id="langDropdown">
+            <option value="zh-TW">繁體中文</option>
+            <option value="en">English</option>
+        </select>
+    </div>
 
     <div id="voteModal">
         <div class="modal-content">
             <h2 id="i18n-modal-title" class="text-xl font-black text-[#fcf6ba] mb-4 whitespace-nowrap">確認投票嗎？</h2>
-            <p id="i18n-modal-msg" class="text-sm text-gray-200 font-bold mb-8 leading-relaxed">投票後<span class="text-[#ff2d55]">絕對不得更改選項</span><br>確認要送出嗎？</p>
+            <p id="i18n-modal-msg" class="text-sm text-gray-300 font-bold mb-8 leading-relaxed">一旦送出，將<span class="text-[#ff2d55]">無法更改</span>您的選擇。<br>確認要送出嗎？</p>
             <div class="flex justify-center gap-3">
-                <button onclick="closeModal()" class="px-6 py-2.5 text-gray-400 font-bold hover:text-white transition-colors text-sm whitespace-nowrap" id="i18n-btn-cancel">取消</button>
+                <button onclick="closeModal()" class="px-6 py-2.5 text-gray-500 font-bold hover:text-white transition-colors text-sm whitespace-nowrap" id="i18n-btn-cancel">取消</button>
                 <button id="confirm-btn" onclick="submitVote()" class="px-8 py-2.5 bg-[#bf953f] text-black font-black rounded-xl hover:bg-[#fcf6ba] shadow-lg transition-colors text-sm whitespace-nowrap">確認送出</button>
             </div>
         </div>
     </div>
 
     <div class="main-card">
-        <div class="lang-control">
-            <select class="lang-select" onchange="changeLang(this.value)" id="langDropdown">
-                <option value="zh-TW">繁體中文</option>
-                <option value="en">English</option>
-            </select>
-        </div>
-
         <header class="text-center flex flex-col items-center">
             <h1 id="i18n-main-title" class="title-prestige">VIP 專屬抽獎池</h1>
-            <p id="event-time-display" class="text-[#bf953f] font-bold text-[13px] mb-5 tracking-wide bg-[#bf953f15] inline-block px-4 py-1.5 rounded-full border border-[#bf953f33] whitespace-nowrap"></p>
+            
+            <p id="event-time-display" class="quarterly-tag"></p>
             
             <div class="user-profile-card">
                 <div id="auth-info" class="flex flex-col items-center w-full" style="display: none;">
-                    <div class="flex flex-wrap justify-center items-center gap-1.5 text-[14px] font-bold text-gray-300">
-                        <span id="i18n-account-lbl">帳號：</span><span id="user-name" class="text-white">---</span>
+                    <div class="flex flex-wrap justify-center items-center gap-2 text-[15px] font-bold text-gray-300">
+                        <span id="user-name" class="text-white">---</span>
                         <span class="text-gray-600 mx-1 hidden md:inline">|</span>
-                        <span id="i18n-vip-lbl">VIP 等級：</span><span id="user-level" class="level-badge">--</span>
+                        <span id="i18n-vip-lbl">VIP</span><span id="user-level" class="level-badge">--</span>
                     </div>
                     
                     <div id="user-status" class="status-badge" style="display: none;">驗證中...</div>
                     
-                    <a href="https://your-upgrade-url.com" id="upgrade-cta" class="upgrade-cta">解鎖 LV.20 參加抽獎</a>
+                    <div id="upgrade-wrapper" class="upgrade-wrapper">
+                        <div class="upgrade-msg" id="i18n-upgrade-msg">需達到 LV.20 即可參與投票</div>
+                        <a href="https://your-upgrade-url.com" id="upgrade-cta" class="upgrade-cta">立即升級參加抽獎</a>
+                    </div>
                 </div>
 
                 <div id="unauth-info" class="text-center text-gray-300 font-bold text-[15px] py-2">
@@ -199,46 +176,32 @@
             </div>
         </header>
 
-        <div class="legendary-card">
-            <div class="legendary-inner">
-                <div id="i18n-tag" class="inline-block bg-[#bf953f] text-black text-[12px] font-black px-4 py-1 rounded-full mb-4 uppercase tracking-widest shadow-xl whitespace-nowrap">隱藏獎項</div>
-                <div class="img-container">
-                    <div class="bg-glow"></div>
-                    <img src="https://public.swag.live/notifications/custom/EL/iphone_17.png" class="iphone-img" alt="iPhone 17 Pro" referrerpolicy="no-referrer">
-                </div>
-                <h4 id="i18n-legendary-desc" class="text-[15px] md:text-[17px] font-black text-[#fcf6ba] leading-relaxed break-keep">當雙方陣營票數平手時，將觸發隱藏機制：直接全體抽出 iPhone 17 Pro，取代原定獎項。</h4>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4 md:gap-8 mb-6">
+        <div class="grid grid-cols-2 gap-4 md:gap-8 prize-container">
             <div class="text-center">
                 <div class="img-container">
                     <div class="bg-glow"></div>
                     <img src="https://public.swag.live/notifications/custom/EL/vip_gift_1.png" class="prize-img" alt="Switch" referrerpolicy="no-referrer">
                 </div>
-                <p id="i18n-prize-a" class="text-[16px] md:text-[18px] text-white font-black tracking-wider mt-3 whitespace-nowrap">Switch</p>
+                <p id="i18n-prize-a" class="prize-title">Switch</p>
             </div>
             <div class="text-center">
                 <div class="img-container">
                     <div class="bg-glow"></div>
                     <img src="https://public.swag.live/notifications/custom/EL/vip_ps5.webp" class="prize-img" alt="PS5" referrerpolicy="no-referrer">
                 </div>
-                <p id="i18n-prize-b" class="text-[16px] md:text-[18px] text-white font-black tracking-wider mt-3 whitespace-nowrap">PS5</p>
+                <p id="i18n-prize-b" class="prize-title">PS5</p>
             </div>
         </div>
 
         <div class="progress-wrapper">
-            <div class="relative w-full h-full">
-                <div id="anchor-a"></div><div id="anchor-b"></div>
-            </div>
             <div class="progress-container mb-3">
                 <div id="bar-a" class="bar-a" style="width: 50%"><span id="percent-a" class="percent-text">50%</span></div>
                 <div id="bar-b" class="bar-b" style="width: 50%"><span id="percent-b" class="percent-text">50%</span></div>
                 <div class="vs-label">VS</div>
             </div>
-            <div class="flex justify-between px-2 text-[10px] md:text-[12px] font-black text-gray-400 tracking-widest uppercase whitespace-nowrap">
-                <span id="count-a">-- 人已投票</span>
-                <span id="count-b">-- 人已投票</span>
+            <div class="flex justify-between px-2 text-[11px] font-black text-gray-400 tracking-widest uppercase whitespace-nowrap">
+                <span id="count-a">-- 票</span>
+                <span id="count-b">-- 票</span>
             </div>
         </div>
 
@@ -247,9 +210,14 @@
             <button id="btn-vote-b" onclick="openVoteModal('B')" class="btn-premium btn-b-blue btn-locked" disabled>選擇 PS5</button>
         </div>
 
+        <div class="hidden-prize-banner">
+            <div class="hp-title" id="i18n-hp-title">🎁 隱藏獎項</div>
+            <div class="hp-desc" id="i18n-hp-desc">雙方平手將觸發【隱藏機制】：原獎項升級，全體加碼抽 <span class="hp-highlight">iPhone 17 Pro</span>！</div>
+        </div>
+
         <div class="rule-box">
-            <h3 id="i18n-rule-header" class="text-[12px] font-bold text-[#fcf6ba] tracking-[0.2em] uppercase mb-3">活動規則</h3>
-            <ul id="i18n-rules-list" class="space-y-2 rule-item"></ul>
+            <h3 id="i18n-rule-header" class="text-[11px] font-bold text-gray-400 tracking-[0.2em] uppercase mb-3">活動規則</h3>
+            <ul id="i18n-rules-list" class="space-y-1.5 rule-item"></ul>
         </div>
     </div>
 
@@ -259,62 +227,68 @@
 
     <script>
         // ==========================================
-        // 1. 抽獎期間設定
+        // 1. 抽獎期間設定 
         // ==========================================
         const EVENT_CONFIG = {
             start: new Date('2026-03-10T00:00:00+08:00'),
             end:   new Date('2026-03-20T23:59:59+08:00'),
-            zh: '抽獎期間：3/10 00:00 - 3/20 23:59',
-            en: 'Lottery Period: Mar 10 00:00 - Mar 20 23:59'
+            zh: '【季賽專屬】本季抽獎期間：3/10 00:00 - 3/20 23:59',
+            en: '【Quarterly Event】Mar 10 00:00 - Mar 20 23:59'
         };
 
         // ==========================================
-        // 2. API 設定
+        // 2. API 設定 (務必更新你的 Google Apps Script 網址)
         // ==========================================
         const CFG = {
             userInfoApi: 'https://swag-user-info-api-905468082258.asia-east1.run.app/api/badges',
-            googleSheetApi: 'https://script.google.com/macros/s/AKfycbzkobyCUYgxWCWR57bAOKUeE9XAOBixppm3ZNVLyvoRjIIQzunLFEH3Tg2J6LrmJIaE/exec'
+            googleSheetApi: 'https://script.google.com/macros/s/AKfycbwOaF12QpQ4n6zF9e3s4H3w10k8F4qWn3L0Y5H9c9D_f1A/exec' // 請換上你"重新部署"後的網址
         };
 
         const MOCK_BASE = { A: 2500, B: 2480 }; 
-        let state = { uid: null, username: '---', level: 0, hasVoted: false, votedChoice: null, isEventActive: true, lang: 'zh-TW' };
+        let state = { uid: null, username: '---', level: 0, hasVoted: false, votedChoice: null, isEventActive: true, lang: 'zh-TW', realA: 0, realB: 0 };
         let selectedChoice = null;
 
-        // 多國語系字典
+        // 多國語系
         const i18n = {
             'zh-TW': {
                 mainTitle: 'VIP 專屬抽獎池', prizeA: 'Switch', prizeB: 'PS5', btnA: '選擇 Switch', btnB: '選擇 PS5',
-                account: '帳號：', vip: 'VIP 等級：', upgrade: '升級解鎖抽獎',
-                statusEligible: '✅ 符合抽獎資格', statusVoted: '👑 已完成投票',
-                cancel: '取消', confirm: '確認送出', modalTitle: '確認投票嗎？', modalMsg: '投票後<span class="text-[#ff2d55]">絕對不得更改選項</span><br>確認要送出嗎？',
-                tag: '隱藏獎項', legendaryDesc: '當雙方陣營票數平手時，將觸發隱藏機制：直接全體加碼抽出 iPhone 17 Pro，取代原定獎項。', ruleHeader: '活動規則',
+                vip: 'VIP', upgradeMsg: '需達到 LV.20 即可參與投票', upgradeCTA: '立即升級參加抽獎',
+                statusEligible: '✅ 符合抽獎資格', statusVoted: '👑 已完成本季投票',
+                cancel: '取消', confirm: '確認送出', modalTitle: '確認投票嗎？', modalMsg: '一旦送出，將<span class="text-[#ff2d55]">無法更改</span>您的選擇。<br>確認要送出嗎？',
+                hpTitle: '🎁 隱藏機制', hpDesc: '雙方平手將觸發【隱藏機制】：原獎項升級，全體加碼抽 <span class="hp-highlight">iPhone 17 Pro</span>！', ruleHeader: '活動規則',
                 rules: [
-                    '1. 參與活動時，請先選擇欲參加之獎池，並完成投票。',
-                    '<strong class="text-[#ff2d55]">2. 每個帳號限投票一次，投票後絕對無法更改。</strong>',
-                    '3. 僅開放 VIP 20 等（含）以上用戶參與投票。',
+                    '1. 【季賽機制】本活動每季更新獎項，每人每季限投一票。',
+                    '2. 僅開放 VIP 20 等（含）以上用戶參與投票。',
+                    '3. 投票一旦送出即無法更改。',
                     '4. 若各獎池投票比例不相同，則僅從「投票比例最高之獎池」參與用戶中抽出得主。',
-                    '<strong class="text-[#fcf6ba]">5. 若最終比例為 50% vs 50%，將觸發隱藏機制，改由全體參與用戶中抽出 iPhone 17 Pro 乙名。</strong>',
-                    '6. 中獎用戶須於指定時間內親自至本公司完成領獎手續。'
+                    '5. 中獎用戶須於指定時間內親自至本公司完成領獎手續。'
                 ],
-                disclaimer: '主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利，修改訊息將於本網站上公佈，不另行通知。'
+                disclaimer: '主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利。'
             },
             'en': {
                 mainTitle: 'VIP PRESTIGE POOL', prizeA: 'Switch', prizeB: 'PS5', btnA: 'Vote Switch', btnB: 'Vote PS5',
-                account: 'Account: ', vip: 'Level: ', upgrade: 'Upgrade to Unlock',
-                statusEligible: '✅ Eligible for Lottery', statusVoted: '👑 Vote Casted',
-                cancel: 'Cancel', confirm: 'Confirm Vote', modalTitle: 'Confirm your vote?', modalMsg: 'Selection <span class="text-[#ff2d55]">cannot be changed</span> later.<br>Proceed?',
-                tag: 'Hidden Prize', legendaryDesc: 'If the final votes tie, a hidden mechanism is triggered: an iPhone 17 Pro will be drawn for all participants, replacing the original prizes.', ruleHeader: 'Activity Rules',
+                vip: 'VIP', upgradeMsg: 'Reach LV.20 to participate', upgradeCTA: 'Upgrade Now',
+                statusEligible: '✅ Eligible to Vote', statusVoted: '👑 Voted for this Quarter',
+                cancel: 'Cancel', confirm: 'Submit Vote', modalTitle: 'Confirm Vote?', modalMsg: 'Selection <span class="text-[#ff2d55]">cannot be changed</span>.<br>Proceed?',
+                hpTitle: '🎁 Hidden Bonus', hpDesc: 'If votes tie, a hidden mechanism triggers: an <span class="hp-highlight">iPhone 17 Pro</span> will be drawn for ALL participants!', ruleHeader: 'Rules',
                 rules: [
-                    '1. Select your pool and vote to participate.',
-                    '<strong class="text-[#ff2d55]">2. Selection absolutely cannot be changed once confirmed.</strong>',
-                    '3. Only VIP level 20 and above can participate.',
+                    '1. [Quarterly Event] Prizes update quarterly. 1 vote per person per quarter.',
+                    '2. Only VIP level 20 and above can participate.',
+                    '3. Votes cannot be changed once submitted.',
                     '4. Only users in the majority pool will be entered into the draw.',
-                    '<strong class="text-[#fcf6ba]">5. If the final ratio is exactly 50/50, an iPhone 17 Pro will be drawn from ALL participants.</strong>',
-                    '6. Winners must collect prizes in person at HQ within the designated time.'
+                    '5. Winners must collect prizes in person at HQ.'
                 ],
-                disclaimer: 'The organizer reserves the right to change event details at any time without prior notice.'
+                disclaimer: 'The organizer reserves the right to change event details at any time.'
             }
         };
+
+        // 自訂提示框
+        function showMessage(msg) {
+            const el = document.getElementById('customMsg');
+            el.innerText = msg;
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 2500);
+        }
 
         async function initApp() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -331,6 +305,7 @@
             document.getElementById('unauth-info').style.display = 'none';
 
             try {
+                // 1. 取得使用者資料
                 const res = await fetch(`${CFG.userInfoApi}?user_id=${state.uid}`).then(r => r.json());
                 state.username = res.username || state.uid.substring(0, 6);
                 state.level = res.level || 0;
@@ -338,36 +313,36 @@
                 document.getElementById('user-name').innerText = state.username;
                 document.getElementById('user-level').innerText = state.level;
 
-                const localVote = localStorage.getItem(`vip_vote_${state.uid}`);
-                if (localVote) {
-                    state.hasVoted = true;
-                    state.votedChoice = localVote;
-                } else {
+                // 2. 透過 doGet 取得試算表真實票數與個人投票狀態
+                if (CFG.googleSheetApi.includes("script.google.com")) {
                     try {
                         const sheetRes = await fetch(`${CFG.googleSheetApi}?user_id=${state.uid}`).then(r => r.json());
-                        if (sheetRes && sheetRes.voted) {
-                            state.hasVoted = true;
-                            state.votedChoice = sheetRes.choice;
-                            localStorage.setItem(`vip_vote_${state.uid}`, sheetRes.choice);
+                        if (sheetRes) {
+                            if (sheetRes.voted) {
+                                state.hasVoted = true;
+                                state.votedChoice = sheetRes.choice;
+                            }
+                            // 加上真實票數
+                            state.realA = sheetRes.totalA || 0;
+                            state.realB = sheetRes.totalB || 0;
                         }
-                    } catch (e) { /* Catch CORS or Network error smoothly */ }
+                    } catch (e) { console.warn("Google Sheet Fetch Error", e); }
                 }
-            } catch (e) { 
-                document.getElementById('user-name').innerText = "讀取失敗";
-            }
+
+                // 本地快取備援
+                if (!state.hasVoted) {
+                    const localVote = localStorage.getItem(`vip_vote_${state.uid}`);
+                    if (localVote) { state.hasVoted = true; state.votedChoice = localVote; }
+                }
+
+            } catch (e) { document.getElementById('user-name').innerText = "讀取失敗"; }
             
             changeLang(document.getElementById('langDropdown').value);
         }
 
         function checkEventTime() {
             const now = new Date();
-            if (now < EVENT_CONFIG.start) {
-                state.isEventActive = false;
-            } else if (now > EVENT_CONFIG.end) {
-                state.isEventActive = false;
-            } else {
-                state.isEventActive = true;
-            }
+            state.isEventActive = (now >= EVENT_CONFIG.start && now <= EVENT_CONFIG.end);
         }
 
         function renderStatus(type, text) {
@@ -385,9 +360,9 @@
             
             try {
                 document.getElementById('i18n-main-title').innerText = d.mainTitle;
-                document.getElementById('i18n-account-lbl').innerText = d.account;
                 document.getElementById('i18n-vip-lbl').innerText = d.vip;
-                document.getElementById('upgrade-cta').innerText = d.upgrade;
+                document.getElementById('i18n-upgrade-msg').innerText = d.upgradeMsg;
+                document.getElementById('upgrade-cta').innerText = d.upgradeCTA;
                 document.getElementById('btn-vote-a').innerText = d.btnA;
                 document.getElementById('btn-vote-b').innerText = d.btnB;
                 document.getElementById('i18n-prize-a').innerText = d.prizeA;
@@ -396,14 +371,12 @@
                 document.getElementById('i18n-modal-msg').innerHTML = d.modalMsg;
                 document.getElementById('i18n-btn-cancel').innerText = d.cancel;
                 document.getElementById('confirm-btn').innerText = d.confirm;
-                document.getElementById('i18n-tag').innerText = d.tag;
-                document.getElementById('i18n-legendary-desc').innerText = d.legendaryDesc;
+                document.getElementById('i18n-hp-title').innerText = d.hpTitle;
+                document.getElementById('i18n-hp-desc').innerHTML = d.hpDesc;
                 document.getElementById('i18n-rule-header').innerText = d.ruleHeader;
                 document.getElementById('i18n-disclaimer').innerText = d.disclaimer;
                 
-                if(!state.uid) {
-                    document.getElementById('unauth-info').innerText = lang === 'en' ? 'Please Log In' : '請登入帳號';
-                }
+                if(!state.uid) { document.getElementById('unauth-info').innerText = lang === 'en' ? 'Please Log In' : '請登入帳號'; }
 
                 const list = document.getElementById('i18n-rules-list');
                 list.innerHTML = d.rules.map(r => `<li>${r}</li>`).join('');
@@ -414,23 +387,20 @@
 
         function updateUI() {
             checkEventTime();
-            if(!state.uid) {
-                updateChartOnly();
-                return;
-            }
+            if(!state.uid) { updateChartOnly(); return; }
 
             const d = i18n[state.lang];
             const btnA = document.getElementById('btn-vote-a');
             const btnB = document.getElementById('btn-vote-b');
-            const cta = document.getElementById('upgrade-cta');
+            const upgWrap = document.getElementById('upgrade-wrapper');
             const statusBadge = document.getElementById('user-status');
 
-            // CTA 按鈕與狀態顯示邏輯
+            // 等級不足且未投票，顯示 CTA
             if (state.level < 20 && !state.hasVoted) {
                 statusBadge.style.display = 'none';
-                cta.style.display = 'block';
+                upgWrap.style.display = 'block';
             } else {
-                cta.style.display = 'none';
+                upgWrap.style.display = 'none';
             }
 
             if (state.hasVoted) {
@@ -452,8 +422,9 @@
         }
 
         function updateChartOnly() {
-            let countA = MOCK_BASE.A + (state.votedChoice === 'A' ? 1 : 0);
-            let countB = MOCK_BASE.B + (state.votedChoice === 'B' ? 1 : 0);
+            // MOCK 基礎票數 + 真實伺服器票數 + 自己剛剛投的票
+            let countA = MOCK_BASE.A + state.realA + (state.votedChoice === 'A' && state.realA === 0 ? 1 : 0);
+            let countB = MOCK_BASE.B + state.realB + (state.votedChoice === 'B' && state.realB === 0 ? 1 : 0);
             let total = countA + countB;
             let pA = Math.round((countA / total) * 100) || 50;
             let pB = 100 - pA;
@@ -463,27 +434,9 @@
             document.getElementById('percent-a').innerText = pA + '%';
             document.getElementById('percent-b').innerText = pB + '%';
             
-            const votedText = state.lang === 'en' ? ' Voted' : ' 人已投票';
-            document.getElementById('count-a').innerText = `${countA.toLocaleString()}${votedText}`;
-            document.getElementById('count-b').innerText = `${countB.toLocaleString()}${votedText}`;
-
-            // 皇冠動態定位 (如果平手則隱藏)
-            requestAnimationFrame(() => {
-                const crown = document.getElementById('crown');
-                if (pA === 50 && pB === 50) {
-                    crown.style.display = 'none';
-                } else {
-                    let targetAnchor = pA > pB ? document.getElementById('anchor-a') : document.getElementById('anchor-b');
-                    let rotation = pA > pB ? 'rotate(-45deg)' : 'rotate(45deg)';
-                    if (targetAnchor) {
-                        const rect = targetAnchor.getBoundingClientRect();
-                        crown.style.display = 'block';
-                        crown.style.left = (rect.left + window.scrollX) + 'px';
-                        crown.style.top = (rect.top + window.scrollY) + 'px';
-                        crown.style.transform = rotation;
-                    }
-                }
-            });
+            const voteTxt = state.lang === 'en' ? ' Votes' : ' 票';
+            document.getElementById('count-a').innerText = `${countA.toLocaleString()}${voteTxt}`;
+            document.getElementById('count-b').innerText = `${countB.toLocaleString()}${voteTxt}`;
         }
 
         function openVoteModal(choice) {
@@ -503,31 +456,38 @@
         async function submitVote() {
             const btn = document.getElementById('confirm-btn');
             const originalText = btn.innerText;
-            btn.innerText = state.lang === 'en' ? "Processing..." : "處理中..."; 
+            btn.innerText = state.lang === 'en' ? "Sending..." : "處理中..."; 
             btn.disabled = true;
 
             try {
-                await fetch(CFG.googleSheetApi, {
+                // 使用純文字 POST 讓 Google Apps Script 解析
+                const response = await fetch(CFG.googleSheetApi, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
                         user_id: state.uid,
                         username: state.username,
                         choice: selectedChoice
                     })
-                });
+                }).then(r => r.json());
                 
+                if(response && response.success === false && response.message === "Already voted") {
+                    showMessage(state.lang === 'en' ? 'Already Voted!' : '您已經投過票囉！');
+                } else {
+                    showMessage(state.lang === 'en' ? 'Vote Successful!' : '投票成功！');
+                    if (selectedChoice === 'A') state.realA++;
+                    if (selectedChoice === 'B') state.realB++;
+                }
+
                 localStorage.setItem(`vip_vote_${state.uid}`, selectedChoice);
                 state.hasVoted = true;
                 state.votedChoice = selectedChoice;
                 
                 closeModal();
                 updateUI();
-                setTimeout(() => alert(state.lang === 'en' ? 'Vote Successful!' : '投票成功！'), 300);
 
             } catch (e) {
-                alert(state.lang === 'en' ? 'Network error.' : "連線不穩，請重試！");
+                showMessage(state.lang === 'en' ? 'Network error.' : "連線不穩，請確認網路後重試！");
                 btn.innerText = originalText; 
                 btn.disabled = false;
             }
