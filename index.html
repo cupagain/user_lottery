@@ -76,29 +76,39 @@
         .upgrade-cta { display: inline-block; padding: 8px 24px; border-radius: 50px; background: linear-gradient(90deg, #bf953f, #fcf6ba, #bf953f); background-size: 200% auto; color: #000; font-size: 14px; font-weight: 900; letter-spacing: 1px; text-decoration: none; box-shadow: 0 0 15px rgba(191, 149, 63, 0.4); animation: goldShine 3s linear infinite; }
         @keyframes goldShine { to { background-position: 200% center; } }
 
-        /* --- 隱藏大獎 CTA --- */
+        /* --- 隱藏大獎 CTA (持續平滑流光動畫) --- */
         .hidden-prize-cta {
             position: relative; width: 100%; border-radius: 16px; padding: 14px 0; margin-bottom: 35px; cursor: pointer;
-            background: linear-gradient(135deg, #1f180a, #33270a, #1f180a); border: 1px solid rgba(252, 246, 186, 0.6);
-            box-shadow: 0 5px 20px rgba(191, 149, 63, 0.3); overflow: hidden; transition: 0.3s;
+            background: linear-gradient(90deg, #1f180a 0%, #5c450d 50%, #1f180a 100%); 
+            background-size: 200% auto;
+            border: 1px solid rgba(252, 246, 186, 0.6);
+            box-shadow: 0 5px 20px rgba(191, 149, 63, 0.3), inset 0 0 15px rgba(252,246,186,0.1); 
+            animation: smoothFlow 3s linear infinite;
+            transition: 0.3s;
         }
         .hidden-prize-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(191, 149, 63, 0.5); }
-        .hidden-prize-cta::after { content: ''; position: absolute; top: -50%; left: -50%; width: 30px; height: 200%; background: rgba(255, 255, 255, 0.6); transform: rotate(35deg); filter: blur(5px); animation: sweep 3.5s infinite ease-in-out; pointer-events: none; }
-        @keyframes sweep { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
+        @keyframes smoothFlow {
+            0% { background-position: 200% center; }
+            100% { background-position: 0% center; }
+        }
         .hp-text { color: #fcf6ba; font-weight: 900; font-size: 16px; letter-spacing: 2px; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
 
-        /* --- 獎項展示區 (統一高度，平衡大小) --- */
+        /* --- 獎項展示區 (平衡尺寸) --- */
         .prize-container { position: relative; margin-bottom: 30px; width: 100%; }
-        .img-container { position: relative; display: flex; justify-content: center; align-items: center; height: 130px; margin-bottom: 15px; }
+        .img-container { position: relative; display: flex; justify-content: center; align-items: center; height: 140px; margin-bottom: 10px; }
         .bg-glow { position: absolute; width: 110px; height: 110px; background: rgba(191,149,63,0.3); filter: blur(35px); border-radius: 50%; z-index: 1; pointer-events: none; }
-        .prize-img { max-width: 100%; max-height: 100%; width: auto; height: auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8)); position: relative; z-index: 2; object-fit: contain; transition: transform 0.3s;}
-        .prize-img:hover { transform: scale(1.05); }
+        
+        /* 針對不同形狀進行精細比例調校 */
+        .img-switch { width: 120px; height: 120px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8)); position: relative; z-index: 2; object-fit: contain; transition: transform 0.3s;}
+        .img-ps5 { width: 145px; height: 145px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8)); position: relative; z-index: 2; object-fit: contain; transition: transform 0.3s;}
+        .img-switch:hover, .img-ps5:hover { transform: scale(1.05); }
+        
         .prize-title { font-size: 24px; font-weight: 900; color: #fff; letter-spacing: 1px; text-shadow: 0 3px 6px rgba(0,0,0,0.9); position: relative; z-index: 2; margin-bottom: 6px;}
         
         /* 抽出 1 名 標籤 */
         .prize-qty-tag { background: rgba(191, 149, 63, 0.15); border: 1px solid rgba(191, 149, 63, 0.4); color: #fcf6ba; font-size: 11px; font-weight: 900; padding: 3px 12px; border-radius: 50px; display: inline-block; letter-spacing: 1px;}
 
-        /* --- 完美無縫進度條 (採用絕對定位徹底解決高度落差) --- */
+        /* --- 完美無縫進度條 --- */
         .progress-wrapper { position: relative; margin: 0 0 25px 0; width: 100%; }
         .progress-container { 
             width: 100%; height: 56px; background: #000; border-radius: 28px; 
@@ -109,7 +119,7 @@
         .bar-b { position: absolute; right: 0; top: 0; height: 100%; background: linear-gradient(90deg, var(--accent-blue), #002244); transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; align-items: center; justify-content: center; z-index: 1; }
         .percent-text { font-weight: 900; font-size: 1.6rem; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.9); line-height: 1; }
         
-        /* 中間 VS 徽章遮蓋交界處 */
+        /* 中間 VS 徽章 */
         .vs-label { 
             position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); 
             color: #fcf6ba; font-weight: 900; font-size: 14px; z-index: 10; 
@@ -128,15 +138,15 @@
         .btn-locked { opacity: 0.3; cursor: not-allowed; filter: grayscale(0.8); border-color: transparent;}
         .btn-active-voted { opacity: 1 !important; border-color: var(--gold-light) !important; box-shadow: inset 0 0 25px rgba(191,149,63,0.7), 0 0 15px rgba(191,149,63,0.4) !important; filter: none !important; color: #fff !important;}
 
-        /* 活動規則 */
-        .rule-box { background: rgba(0, 0, 0, 0.4); border-radius: 20px; padding: 25px 20px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.05); }
+        /* 活動規則 (推遠距離，聚焦獎項) */
+        .rule-box { background: rgba(0, 0, 0, 0.4); border-radius: 20px; padding: 25px 20px; margin-top: 50px; border: 1px solid rgba(255,255,255,0.05); }
         .rule-header { font-size: 16px; font-weight: 900; color: #fcf6ba; letter-spacing: 3px; text-align: center; margin-bottom: 16px; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
         .rule-item { color: #d1d5db !important; font-weight: 700; line-height: 2; font-size: 13px; word-break: keep-all; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         @media (max-width: 400px) { .rule-item { white-space: normal; word-break: break-word; } } 
 
-        /* 分隔線與免責聲明 */
-        .footer-divider { width: 80%; height: 1px; background: linear-gradient(90deg, transparent, rgba(191,149,63,0.3), transparent); margin: 35px auto 20px auto; }
-        .web-footer { max-width: 600px; width: 100%; padding-bottom: 40px; text-align: center; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6; font-weight: bold;}
+        /* 分隔線與免責聲明 (大幅降低顯眼度) */
+        .footer-divider { width: 80%; height: 1px; background: linear-gradient(90deg, transparent, rgba(191,149,63,0.2), transparent); margin: 35px auto 20px auto; }
+        .web-footer { max-width: 600px; width: 100%; padding-bottom: 40px; text-align: center; font-size: 11px; color: rgba(255,255,255,0.25); line-height: 1.6; font-weight: bold;}
         
         /* 系統提示 */
         #customMsg { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 20000; background: #0a0a0a; border: 1px solid var(--gold-primary); color: #fff; padding: 12px 24px; border-radius: 50px; font-weight: 900; font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); opacity: 0; transition: opacity 0.3s; white-space: nowrap; }
@@ -161,10 +171,12 @@
         <div class="modal-content" style="border: 2px solid var(--gold-primary); background: radial-gradient(circle at 50% 30%, #1a1508 0%, #050505 80%);">
             <h2 id="i18n-hp-modal-title" class="text-2xl font-black text-[#fcf6ba] mb-5 tracking-widest whitespace-nowrap">隱藏大獎</h2>
             <img src="https://public.swag.live/notifications/custom/EL/iphone_17.png" class="iphone-modal-img" alt="iPhone 17 Pro" referrerpolicy="no-referrer">
-            <div id="i18n-hp-modal-desc" class="text-[16px] text-gray-200 font-bold mb-5 space-y-2 whitespace-nowrap">
+            <div id="i18n-hp-modal-desc" class="text-[16px] text-gray-200 font-bold mb-3 space-y-2 whitespace-nowrap">
                 <p>當最終票數平手時觸發</p>
                 <p class="text-[#ff2d55] text-xl">全體抽出 iPhone 17 Pro</p>
             </div>
+            <div class="mb-4"><span id="i18n-hp-qty" class="prize-qty-tag">僅抽出 1 名</span></div>
+            
             <p id="i18n-hp-modal-note" class="text-[12px] text-gray-500 font-bold mb-6 tracking-wide">※ 觸發時原定獎項取消</p>
             <button onclick="closeIphoneModal()" class="px-8 py-3 bg-transparent border border-[#bf953f] text-[#bf953f] font-bold rounded-xl hover:bg-[#bf953f] hover:text-black transition-colors text-sm w-full" id="i18n-btn-close">關閉</button>
         </div>
@@ -219,18 +231,18 @@
         </button>
 
         <div class="grid grid-cols-2 gap-4 md:gap-6 prize-container">
-            <div class="text-center">
+            <div class="text-center flex flex-col items-center">
                 <div class="img-container">
                     <div class="bg-glow"></div>
-                    <img src="https://public.swag.live/notifications/custom/EL/switch.png" class="prize-img" alt="Switch" referrerpolicy="no-referrer">
+                    <img src="https://public.swag.live/notifications/custom/EL/switch.png" class="img-switch" alt="Switch" referrerpolicy="no-referrer">
                 </div>
                 <p id="i18n-prize-a" class="prize-title">Switch</p>
                 <span id="i18n-prize-a-qty" class="prize-qty-tag">僅抽出 1 名</span>
             </div>
-            <div class="text-center">
+            <div class="text-center flex flex-col items-center">
                 <div class="img-container">
                     <div class="bg-glow"></div>
-                    <img src="https://public.swag.live/notifications/custom/EL/ps5.png" class="prize-img" alt="PS5" referrerpolicy="no-referrer">
+                    <img src="https://public.swag.live/notifications/custom/EL/ps5.png" class="img-ps5" alt="PS5" referrerpolicy="no-referrer">
                 </div>
                 <p id="i18n-prize-b" class="prize-title">PS5</p>
                 <span id="i18n-prize-b-qty" class="prize-qty-tag">僅抽出 1 名</span>
@@ -291,7 +303,7 @@
         const i18n = {
             'zh-TW': {
                 mainTitle: 'VIP 專屬抽獎池', prizeA: 'Switch', prizeB: 'PS5', btnA: '選擇 Switch', btnB: '選擇 PS5',
-                prizeQty: '僅抽出 1 名',
+                prizeQty: '僅抽出 1 名', hpQty: '僅抽出 1 名',
                 account: '帳號：', vip: 'VIP', upgradeMsg: '需達到 LV.20 即可參與投票', upgradeCTA: '立即升級參加抽獎',
                 statusEligible: '✅ 符合抽獎資格', statusVoted: '👑 已完成本季投票',
                 cancel: '取消', confirm: '確認送出', close: '關閉', modalTitle: '確認投票嗎？', modalMsg: '一旦送出，將<span class="text-[#ff2d55]">無法更改</span>您的選擇。<br>確認要送出嗎？',
@@ -310,7 +322,7 @@
             },
             'en': {
                 mainTitle: 'VIP PRESTIGE POOL', prizeA: 'Switch', prizeB: 'PS5', btnA: 'Vote Switch', btnB: 'Vote PS5',
-                prizeQty: '1 Winner Only',
+                prizeQty: '1 Winner Only', hpQty: '1 Winner Only',
                 account: 'Acc: ', vip: 'VIP', upgradeMsg: 'Reach LV.20 to participate', upgradeCTA: 'Upgrade Now',
                 statusEligible: '✅ Eligible to Vote', statusVoted: '👑 Voted for this Quarter',
                 cancel: 'Cancel', confirm: 'Submit Vote', close: 'Close', modalTitle: 'Confirm Vote?', modalMsg: 'Selection <span class="text-[#ff2d55]">cannot be changed</span>.<br>Proceed?',
@@ -341,7 +353,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             state.uid = urlParams.get('user_id') || urlParams.get('uid');
             
-            // 測試模式邏輯：如果有 &test_mode=1，產生隨機後綴避開驗證，且絕對不讀取本機快取
+            // 測試模式邏輯
             if (urlParams.get('test_mode') === '1') {
                 state.isTestMode = true;
                 state.testUid = 'TEST_' + state.uid + '_' + Math.floor(Math.random() * 999999);
@@ -445,6 +457,7 @@
                 document.getElementById('i18n-hp-cta-text').innerText = d.hpCta;
                 document.getElementById('i18n-hp-modal-title').innerText = d.hpModalTitle;
                 document.getElementById('i18n-hp-modal-desc').innerHTML = d.hpModalDesc;
+                document.getElementById('i18n-hp-qty').innerText = d.hpQty;
                 document.getElementById('i18n-hp-modal-note').innerText = d.hpModalNote;
                 document.getElementById('i18n-rule-header').innerText = d.ruleHeader;
                 document.getElementById('i18n-disclaimer').innerText = d.disclaimer;
@@ -497,7 +510,6 @@
             let countA = MOCK_BASE.A + state.realA;
             let countB = MOCK_BASE.B + state.realB;
             
-            // 測試模式下即時加上剛剛投的票
             if(state.isTestMode && state.votedChoice) {
                 if(state.votedChoice === 'A') countA++;
                 if(state.votedChoice === 'B') countB++;
@@ -549,7 +561,6 @@
             btn.disabled = true;
 
             try {
-                // 使用 text/plain 繞過 CORS 預檢，確實發送到 Google Sheet
                 const response = await fetch(CFG.googleSheetApi, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -568,7 +579,6 @@
                     if (selectedChoice === 'B') state.realB++;
                 }
 
-                // 測試模式下不寫入 localStorage，確保可以無限重整重投
                 if (!state.isTestMode) {
                     localStorage.setItem(`vip_vote_${state.uid}`, selectedChoice);
                 }
@@ -581,7 +591,6 @@
 
             } catch (e) {
                 console.warn("API Error", e);
-                // 如果網路斷線或 GAS 被擋，依舊給予平滑降級體驗
                 showMessage(state.lang === 'en' ? 'Vote Registered locally.' : "成功紀錄，但網路異常請稍後重整確認");
                 if (!state.isTestMode) {
                     localStorage.setItem(`vip_vote_${state.uid}`, selectedChoice);
