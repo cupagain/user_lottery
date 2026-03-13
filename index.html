@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VIP 專屬抽獎池 - ULTIMATE PRESTIGE</title>
-    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#050505">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
@@ -30,26 +28,32 @@
             padding: 20px 15px; margin: 0; overflow-x: hidden;
         }
 
-        /* --- 頂級 3D 流光標題 --- */
         .title-prestige {
             font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em;
             background: linear-gradient(to bottom, #ffffff 0%, var(--gold-light) 40%, var(--gold-primary) 70%, var(--gold-dark) 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             text-align: center; font-size: clamp(2.2rem, 8vw, 3.5rem);
             filter: drop-shadow(0 4px 10px rgba(0,0,0,0.8));
-            margin-bottom: 25px;
+            margin-bottom: 15px;
         }
 
-        /* 用戶資訊卡 */
+        /* --- 視覺重點轉移：帳號資訊卡 --- */
         .user-profile-card {
-            background: rgba(255, 255, 255, 0.08); border: 1px solid var(--gold-dark);
-            border-radius: 20px; padding: 15px 30px; display: flex; flex-direction: column; align-items: center;
-            margin-bottom: 30px; box-shadow: inset 0 0 15px rgba(191, 149, 63, 0.2); min-width: 260px;
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(191, 149, 63, 0.4);
+            border-radius: 24px; padding: 20px 30px; display: flex; flex-direction: column; align-items: center;
+            margin-bottom: 30px; box-shadow: inset 0 0 20px rgba(191, 149, 63, 0.15); min-width: 280px;
         }
-        .level-badge { background: linear-gradient(135deg, var(--gold-light), var(--gold-dark)); color: #000; font-weight: 900; padding: 3px 10px; border-radius: 6px; font-size: 16px; margin-left: 5px;}
-        .status-badge { font-size: 13px; font-weight: 900; padding: 5px 14px; border-radius: 50px; margin-top: 10px; border: 1px solid #ffffff33; letter-spacing: 1px;}
-        .status-eligible { background: rgba(16, 185, 129, 0.2); color: var(--success-green); border-color: var(--success-green); }
-        .status-ineligible { background: rgba(239, 68, 68, 0.2); color: var(--error-red); border-color: var(--error-red); }
+        .level-badge { 
+            background: linear-gradient(135deg, var(--gold-light), var(--gold-dark)); 
+            color: #000; font-weight: 900; padding: 4px 12px; border-radius: 8px; font-size: 22px; margin-left: 8px;
+            box-shadow: 0 4px 10px rgba(191, 149, 63, 0.3);
+        }
+        .status-badge { 
+            font-size: 15px; font-weight: 900; padding: 8px 20px; border-radius: 50px; margin-top: 15px; 
+            border: 2px solid #ffffff33; letter-spacing: 1px; width: 100%; text-align: center;
+        }
+        .status-eligible { background: rgba(16, 185, 129, 0.15); color: var(--success-green); border-color: var(--success-green); box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); }
+        .status-ineligible { background: rgba(239, 68, 68, 0.15); color: var(--error-red); border-color: var(--error-red); }
 
         .main-card {
             background: rgba(10, 10, 10, 0.98); border: 1px solid rgba(191, 149, 63, 0.25);
@@ -58,7 +62,6 @@
             box-shadow: 0 40px 100px rgba(0,0,0,1); position: relative;
         }
 
-        /* --- 皇冠 智慧定位 --- */
         #crown {
             position: absolute; width: 55px; height: 55px;
             z-index: 500; filter: drop-shadow(0 0 15px var(--gold-primary));
@@ -66,7 +69,6 @@
             display: none; pointer-events: none;
         }
 
-        /* --- 限定成就加碼 (置頂吸睛) --- */
         .legendary-card {
             position: relative; background: #050505; border-radius: 35px;
             padding: 3px; overflow: hidden; margin-bottom: 35px;
@@ -82,16 +84,17 @@
             border-radius: 32px; padding: 35px 20px; text-align: center;
         }
         @keyframes laserRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .iphone-img { width: 120px; margin: 0 auto 15px auto; filter: drop-shadow(0 0 30px rgba(191,149,63,0.7)); display: block; }
+        
+        /* 圖片確保顯示設定 */
+        .iphone-img { width: 130px; height: auto; margin: 0 auto 15px auto; filter: drop-shadow(0 0 30px rgba(191,149,63,0.7)); display: block; object-fit: contain; }
+        .prize-img { width: 110px; height: 110px; object-fit: contain; filter: drop-shadow(0 0 20px rgba(255,255,255,0.15)); margin: 0 auto; display: block; }
 
-        /* 活動規則框 (加強對比) */
         .rule-box {
             background: rgba(255, 255, 255, 0.08); border: 1px dashed rgba(191, 149, 63, 0.5);
             padding: 28px 24px; border-radius: 24px; margin-top: 40px;
         }
         .rule-item { color: #f8fafc !important; font-weight: 500; line-height: 1.8; font-size: 14px; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
 
-        /* 進度條 */
         .progress-wrapper { position: relative; margin: 60px 0 35px 0; }
         .progress-container { height: 75px; background: #000; border-radius: 22px; border: 1px solid rgba(255, 255, 255, 0.2); display: flex; overflow: hidden; }
         .bar-a { background: linear-gradient(90deg, #800, var(--accent-red)); transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; align-items: center; justify-content: center; }
@@ -99,10 +102,6 @@
         .percent-text { font-weight: 900; font-size: 2.2rem; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.9); position: relative; }
         .vs-label { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: #fff; font-weight: 900; font-size: 16px; z-index: 10; background: #000; padding: 4px 12px; border-radius: 12px; border: 2px solid #333;}
 
-        /* 獎項展示圖片 (加入 referrerpolicy 防止防盜鏈阻擋) */
-        .prize-img { width: 110px; height: 110px; object-fit: contain; filter: drop-shadow(0 0 20px rgba(255,255,255,0.15)); margin: 0 auto; display: block; }
-
-        /* 按鈕樣式 */
         .btn-premium { border-radius: 22px; font-weight: 900; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; transition: 0.3s; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); }
         .btn-a-red { background: linear-gradient(145deg, #400, #100); color: #ff9999; }
         .btn-a-red:hover:not(:disabled) { background: var(--accent-red); color: #fff; box-shadow: 0 0 30px rgba(255, 45, 85, 0.6); transform: translateY(-3px); }
@@ -110,10 +109,6 @@
         .btn-b-blue:hover:not(:disabled) { background: var(--accent-blue); color: #fff; box-shadow: 0 0 30px rgba(0, 122, 255, 0.6); transform: translateY(-3px); }
         .btn-locked { opacity: 0.4; cursor: not-allowed; filter: grayscale(0.8); }
         .btn-active-voted { opacity: 1 !important; border-color: var(--gold-light); box-shadow: inset 0 0 20px rgba(191,149,63,0.6); filter: none !important; color: #fff;}
-
-        /* 右上角選單 */
-        .lang-control { position: absolute; top: 1rem; right: 1rem; z-index: 9999; }
-        .lang-select { background: rgba(0, 0, 0, 0.85); border: 1px solid var(--gold-dark); color: var(--gold-primary); padding: 8px 30px 8px 10px; border-radius: 8px; font-size: 12px; font-weight: bold; appearance: none; cursor: pointer; outline: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23bf953f' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; }
 
         /* 皇冠錨點 */
         #anchor-a { position: absolute; top: -50px; left: -30px; } 
@@ -134,13 +129,6 @@
         <path d="M5 21H19V19H5V21ZM5 17H19V11L15 13L12 7L9 13L5 11V17ZM12 5C13.1046 5 14 4.10457 14 3C14 1.89543 13.1046 1 12 1C10.8954 1 10 1.89543 10 3C10 4.10457 10.8954 5 12 5Z" fill="#ffb100"/>
     </svg>
 
-    <div class="lang-control">
-        <select class="lang-select" onchange="changeLang(this.value)" id="langDropdown">
-            <option value="zh-TW">繁體中文</option>
-            <option value="en">English</option>
-        </select>
-    </div>
-
     <div id="voteModal">
         <div class="modal-content">
             <h2 id="i18n-modal-title" class="text-2xl font-black text-[#fcf6ba] mb-4">確認投票嗎？</h2>
@@ -154,26 +142,30 @@
 
     <div class="main-card">
         <header class="text-center">
-            <h1 id="i18n-main-title" class="title-prestige">VIP 專屬抽獎池</h1>
+            <h1 class="title-prestige">VIP 專屬抽獎池</h1>
+            
+            <p id="event-time-display" class="text-[#bf953f] font-bold text-sm mb-5 tracking-wide bg-[#bf953f15] inline-block px-4 py-1.5 rounded-full border border-[#bf953f33]"></p>
             
             <div class="user-profile-card inline-flex mx-auto">
-                <p class="text-[11px] text-gray-400 uppercase tracking-widest mb-2 font-bold">Account Info</p>
-                <div class="flex items-center gap-3">
-                    <span id="user-name" class="font-bold text-lg text-white">讀取中...</span>
-                    <span class="text-gray-600">|</span>
-                    <span class="text-sm font-bold text-gray-300">Level</span>
+                <p class="text-[12px] text-gray-400 uppercase tracking-widest mb-3 font-bold">帳號資訊 / Account Info</p>
+                
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="text-sm font-bold text-gray-400">目前等級</span>
                     <span id="user-level" class="level-badge">--</span>
                 </div>
+                
+                <p id="user-name" class="text-xs text-gray-500 mt-2">讀取中...</p>
+                
                 <div id="user-status" class="status-badge">驗證中...</div>
             </div>
         </header>
 
         <div class="legendary-card">
             <div class="legendary-inner">
-                <div id="i18n-tag" class="inline-block bg-[#bf953f] text-black text-[12px] font-black px-5 py-1.5 rounded-full mb-5 uppercase tracking-widest shadow-xl">限定成就加碼</div>
+                <div class="inline-block bg-[#bf953f] text-black text-[12px] font-black px-5 py-1.5 rounded-full mb-5 uppercase tracking-widest shadow-xl">限定成就加碼</div>
                 <div class="relative">
                     <div id="anchor-iphone"></div>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/IPhone_14_Pro_Max_Silver.png/640px-IPhone_14_Pro_Max_Silver.png" class="iphone-img" alt="iPhone 17 Pro" referrerpolicy="no-referrer" loading="lazy">
+                    <img src="https://i.imgur.com/kP4A6qG.png" class="iphone-img" alt="iPhone 17 Pro" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/IPhone_14_Pro_Max_Silver.png/640px-IPhone_14_Pro_Max_Silver.png'">
                 </div>
                 <h4 class="text-lg md:text-xl font-black text-[#fcf6ba] leading-tight">50 VS 50 全體抽 iPhone 17 pro，原獎項不抽。</h4>
             </div>
@@ -181,12 +173,12 @@
 
         <div class="grid grid-cols-2 gap-8 mb-6">
             <div class="text-center">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Nintendo_Switch_Console.png/640px-Nintendo_Switch_Console.png" class="prize-img" alt="Switch" referrerpolicy="no-referrer" loading="lazy">
-                <p class="text-[11px] text-gray-400 font-bold uppercase tracking-widest mt-3">Team Switch</p>
+                <img src="https://i.imgur.com/3qP9XpK.png" class="prize-img" alt="Switch" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Nintendo_Switch_Console.png/640px-Nintendo_Switch_Console.png'">
+                <p class="text-[12px] text-gray-400 font-bold uppercase tracking-widest mt-3">Team Switch</p>
             </div>
             <div class="text-center">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/PlayStation_5_and_DualSense_with_transparent_background.png/640px-PlayStation_5_and_DualSense_with_transparent_background.png" class="prize-img" alt="PS5" referrerpolicy="no-referrer" loading="lazy">
-                <p class="text-[11px] text-gray-400 font-bold uppercase tracking-widest mt-3">Team PS5</p>
+                <img src="https://i.imgur.com/5XQ9t2b.png" class="prize-img" alt="PS5" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/PlayStation_5_and_DualSense_with_transparent_background.png/640px-PlayStation_5_and_DualSense_with_transparent_background.png'">
+                <p class="text-[12px] text-gray-400 font-bold uppercase tracking-widest mt-3">Team PS5</p>
             </div>
         </div>
 
@@ -211,64 +203,55 @@
         </div>
 
         <div class="rule-box">
-            <h3 id="i18n-rule-header" class="text-[12px] font-bold text-[#fcf6ba] tracking-[0.3em] uppercase mb-4">Activity Rules / 活動規則</h3>
-            <ul id="i18n-rules-list" class="space-y-3 rule-item"></ul>
+            <h3 class="text-[12px] font-bold text-[#fcf6ba] tracking-[0.3em] uppercase mb-4">活動規則</h3>
+            <ul class="space-y-3 rule-item">
+                <li>1. 參與活動時，請先選擇欲參加之獎池，並完成投票。</li>
+                <li><strong class="text-[#ff2d55]">2. 活動期間內絕對不得更改已選擇之獎池。</strong></li>
+                <li>3. 僅開放 VIP 20 等（含）以上用戶參與投票。</li>
+                <li>4. 若各獎池投票比例不相同，則僅從「投票比例最高之獎池」參與用戶中抽出得主。</li>
+                <li><strong class="text-[#fcf6ba]">5. 若最終比例為 50% vs 50%，則改由全體參與用戶中抽出 iPhone 17 Pro 乙名，原設定獎項將不另行抽出。</strong></li>
+                <li>6. 中獎用戶須於指定時間內親自至本公司完成領獎手續。</li>
+            </ul>
         </div>
     </div>
 
     <footer class="web-footer">
-        <p id="i18n-disclaimer">主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利，本活動辦法若未盡詳細事宜，主辦單位得隨時修訂公佈，修改訊息將於本網站上公佈，不另行通知</p>
+        <p>主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利，修改訊息將於本網站上公佈，不另行通知</p>
     </footer>
 
     <script>
-        // API 設置
+        // ==========================================
+        // 1. 活動時間設定 (在這裡修改上線下線時間)
+        // ==========================================
+        const EVENT_CONFIG = {
+            start: new Date('2026-03-10T00:00:00+08:00'),
+            end:   new Date('2026-03-20T23:59:59+08:00'),
+            displayStr: '活動期間：3/10 00:00 - 3/20 23:59'
+        };
+
+        // ==========================================
+        // 2. 系統設定 (請填入正確權限的 Google App Script 網址)
+        // ==========================================
         const CFG = {
             userInfoApi: 'https://swag-user-info-api-905468082258.asia-east1.run.app/api/badges',
-            googleSheetApi: 'https://script.google.com/a/macros/swag.live/s/AKfycbzkobyCUYgxWCWR57bAOKUeE9XAOBixppm3ZNVLyvoRjIIQzunLFEH3Tg2J6LrmJIaE/exec'
+            googleSheetApi: 'https://script.google.com/macros/s/AKfycbz7LgwgqVm24BLQ0l3r_9_91_CwDlG4dprPoXFfa9Z-xCo7bHI4hMol6canRN8IJVN0/exec' // 請換成沒有 /a/swag.live/ 的新網址
         };
 
-        // 模擬基礎票數
         const MOCK_BASE = { A: 2500, B: 2480 }; 
-        let state = { uid: null, username: '---', level: 0, hasVoted: false, votedChoice: null };
+        let state = { uid: null, username: '---', level: 0, hasVoted: false, votedChoice: null, isEventActive: true };
         let selectedChoice = null;
 
-        // 多國語系文本 (包含完整規則)
-        const i18n = {
-            'zh-TW': {
-                mainTitle: 'VIP 專屬抽獎池', btnA: '選擇 Switch', btnB: '選擇 PS5',
-                rules: [
-                    '1. 參與活動時，請先選擇欲參加之獎池，並完成投票。',
-                    '<strong class="text-[#ff2d55]">2. 活動期間內絕對不得更改已選擇之獎池。</strong>',
-                    '3. 活動結束後將統計各獎池最終投票比例，比例計算採四捨五入至整數。',
-                    '4. 若各獎池投票比例不相同，則僅從「投票比例最高之獎池」參與用戶中抽出得主。',
-                    '<strong class="text-[#fcf6ba]">5. 若最終比例為 50% vs 50%，則改由全體參與用戶中抽出 iPhone 17 Pro 乙名，原設定獎項將不另行抽出。</strong>',
-                    '6. 中獎用戶須於指定時間內親自至本公司完成領獎手續。'
-                ],
-                disclaimer: '主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利，本活動辦法若未盡詳細事宜，主辦單位得隨時修訂公佈，修改訊息將於本網站上公佈，不另行通知。'
-            },
-            'en': {
-                mainTitle: 'VIP PRESTIGE POOL', btnA: 'Vote Switch', btnB: 'Vote PS5',
-                rules: [
-                    '1. Select your pool and vote to participate.',
-                    '<strong class="text-[#ff2d55]">2. Selection absolutely cannot be changed once confirmed.</strong>',
-                    '3. Final ratios are rounded to the nearest whole number.',
-                    '4. Only users in the majority pool will be entered into the draw.',
-                    '<strong class="text-[#fcf6ba]">5. If the final ratio is exactly 50/50, an iPhone 17 Pro will be drawn from ALL participants instead of the original prizes.</strong>',
-                    '6. Winners must collect prizes in person at HQ within the designated time.'
-                ],
-                disclaimer: 'The organizer reserves the right to change event details at any time without prior notice.'
-            }
-        };
-
-        // 1. 初始化應用
         async function initApp() {
+            // 顯示活動時間
+            document.getElementById('event-time-display').innerText = EVENT_CONFIG.displayStr;
+            checkEventTime();
+
             const urlParams = new URLSearchParams(window.location.search);
             state.uid = urlParams.get('user_id') || urlParams.get('uid');
 
             if(!state.uid) {
                 document.getElementById('user-name').innerText = "未登入帳號";
                 renderStatus('ineligible', '請從正確連結進入');
-                changeLang('zh-TW'); // 確保沒登入時規則依然會顯示
                 return;
             }
 
@@ -278,69 +261,46 @@
                 state.username = res.username || "User_" + state.uid.substring(0, 4);
                 state.level = res.level || 0;
                 
-                document.getElementById('user-name').innerText = state.username;
+                document.getElementById('user-name').innerText = "@" + state.username;
                 document.getElementById('user-level').innerText = state.level;
 
-                // 檢查是否投過票 (快取優先，減輕 Google API 負擔)
+                // 檢查是否投過票
                 const localVote = localStorage.getItem(`vip_vote_${state.uid}`);
                 if (localVote) {
                     state.hasVoted = true;
                     state.votedChoice = localVote;
-                } else {
-                    try {
-                        const sheetRes = await fetch(`${CFG.googleSheetApi}?user_id=${state.uid}`).then(r => r.json());
-                        if (sheetRes && sheetRes.voted) {
-                            state.hasVoted = true;
-                            state.votedChoice = sheetRes.choice;
-                            localStorage.setItem(`vip_vote_${state.uid}`, sheetRes.choice);
-                        }
-                    } catch (sheetError) {
-                        console.warn("Sheet API Error (CORS or Network). Proceeding with local state.", sheetError);
-                        // 如果 Google API 阻擋，我們不讓畫面壞掉，允許繼續 (以防萬一 API 掛掉)
-                    }
                 }
             } catch (e) { 
                 console.error("Init Error", e); 
                 document.getElementById('user-name').innerText = "資料讀取失敗";
             }
             
-            // 確保語言與規則渲染
-            changeLang(document.getElementById('langDropdown').value);
-        }
-
-        // 2. 切換語言與寫入規則 (加入 try-catch 防護)
-        function changeLang(lang) {
-            const d = i18n[lang] || i18n['zh-TW'];
-            try {
-                document.getElementById('i18n-main-title').innerText = d.mainTitle;
-                // 修正了之前的 ID 對應錯誤
-                document.getElementById('btn-vote-a').innerText = d.btnA;
-                document.getElementById('btn-vote-b').innerText = d.btnB;
-                document.getElementById('i18n-disclaimer').innerText = d.disclaimer;
-                
-                // 寫入規則 (這行如果上面拋錯就不會執行，所以加上 try-catch)
-                const list = document.getElementById('i18n-rules-list');
-                list.innerHTML = d.rules.map(r => `<li>${r}</li>`).join('');
-            } catch (error) {
-                console.error("Language Render Error:", error);
-            }
-            // 無論語言渲染是否報錯，都要更新 UI 狀態
             updateUI();
         }
 
-        // 3. 狀態標籤渲染
+        function checkEventTime() {
+            const now = new Date();
+            if (now < EVENT_CONFIG.start) {
+                state.isEventActive = false;
+                renderStatus('ineligible', '活動尚未開始');
+            } else if (now > EVENT_CONFIG.end) {
+                state.isEventActive = false;
+                renderStatus('ineligible', '活動已結束');
+            }
+        }
+
         function renderStatus(type, text) {
             const el = document.getElementById('user-status');
             el.className = 'status-badge status-' + type;
             el.innerText = text || (type === 'eligible' ? '✅ 符合投票資格' : '❌ 等級不足 (需 LV.20)');
         }
 
-        // 4. 更新畫面 (包含鎖定按鈕與計算進度)
         function updateUI() {
+            if(!state.isEventActive && !state.hasVoted) return; // 活動未開始/結束不更新按鈕為啟用
+
             const btnA = document.getElementById('btn-vote-a');
             const btnB = document.getElementById('btn-vote-b');
 
-            // 狀態與按鈕鎖定邏輯
             if (state.hasVoted) {
                 renderStatus('eligible', '👑 已完成投票');
                 btnA.disabled = btnB.disabled = true;
@@ -371,7 +331,7 @@
             document.getElementById('count-a').innerText = `${countA.toLocaleString()} 人已投票`;
             document.getElementById('count-b').innerText = `${countB.toLocaleString()} 人已投票`;
 
-            // 皇冠動態定位 (使用 requestAnimationFrame 確保 DOM 渲染完畢)
+            // 皇冠動態定位
             requestAnimationFrame(() => {
                 const crown = document.getElementById('crown');
                 let targetAnchor, rotation;
@@ -393,10 +353,11 @@
             });
         }
 
-        // 5. 彈窗控制
         function openVoteModal(choice) {
+            if (!state.isEventActive) { alert("非活動時間！"); return; }
             if (state.hasVoted) return;
             if (state.level < 20) { alert("等級不足！需達到 VIP 20 等才能參與。"); return; }
+            
             selectedChoice = choice;
             const modal = document.getElementById('voteModal');
             modal.style.display = 'flex';
@@ -409,26 +370,23 @@
             setTimeout(() => modal.style.display = 'none', 300);
         }
 
-        // 6. 送出投票 (防連點 + CORS 防呆)
         async function submitVote() {
             const btn = document.getElementById('confirm-btn');
             btn.innerText = "處理中..."; 
             btn.disabled = true;
 
             try {
-                // 使用 no-cors 模式，因為 Google Apps Script 預設對前端 POST 要求可能不回傳正確的 CORS Headers
+                // 使用純文字 POST 避開 Google Apps Script 的 CORS 阻擋
                 await fetch(CFG.googleSheetApi, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({
+                    body: JSON.stringify({
                         user_id: state.uid,
                         username: state.username,
                         choice: selectedChoice
                     })
                 });
                 
-                // 不管 Server 實際回傳什麼，只要沒有發生網路斷線拋錯，我們就視為成功寫入並更新本地快取
+                // 寫入本地快取
                 localStorage.setItem(`vip_vote_${state.uid}`, selectedChoice);
                 state.hasVoted = true;
                 state.votedChoice = selectedChoice;
@@ -439,13 +397,12 @@
 
             } catch (e) {
                 console.error("Submit Error:", e);
-                alert("網路連線不穩，請確認網路狀態後重試！");
+                alert("寫入失敗，請確認 Apps Script 部署權限設定為「所有人」！");
                 btn.innerText = "確認送出"; 
                 btn.disabled = false;
             }
         }
 
-        // 監聽事件
         window.addEventListener('DOMContentLoaded', initApp);
         window.addEventListener('resize', updateUI);
     </script>
