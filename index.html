@@ -270,9 +270,9 @@
         </footer>
     </div>
 
-    <script>
+<script>
         // ==========================================
-        // 1. 抽獎期間設定
+        // 1. 活動期間與 API 設定
         // ==========================================
         const EVENT_CONFIG = {
             start: new Date('2026-03-10T00:00:00+08:00'),
@@ -281,28 +281,22 @@
             en: '<div class="font-bold text-[14px] tracking-widest">Quarterly Lottery</div><div class="text-[12px] font-bold mt-1 tracking-wider opacity-90">Mar 10 00:00 - Mar 20 23:59</div>'
         };
 
-        // ==========================================
-        // 2. API 設定 (已更新中轉 API 路徑)
-        // ==========================================
         const CFG = {
             userInfoApi: 'https://swag-user-info-api-905468082258.asia-east1.run.app/api/badges',
-            handlerApi: 'https://vip-lottery-api-905468082258.asia-east1.run.app/api/request'
+            handlerApi: 'https://vip-lottery-api-905468082258.asia-east1.run.app/api/request',
+            statsApi: 'https://vip-lottery-api-905468082258.asia-east1.run.app/api/stats' // <--- 新增此行
         };
 
-        const MOCK_BASE = { A: 0, B: 0 }; 
+        const MOCK_BASE = { A: 0, B: 0 }; // 0 代表完全顯示真實數據
         let state = { uid: null, testUid: null, username: '---', level: 0, hasVoted: false, votedChoice: null, isEventActive: true, lang: 'zh-TW', realA: 0, realB: 0, isTestMode: false };
         let selectedChoice = null;
 
         const i18n = {
             'zh-TW': {
                 mainTitle: 'VIP 專屬抽獎池', prizeA: 'Switch', prizeB: 'PS5', btnA: '選擇 Switch', btnB: '選擇 PS5',
-                prizeQty: '僅抽出 1 名', hpQty: '僅抽出 1 名',
-                account: '帳號：', vip: 'VIP', upgradeMsg: '需達到 LV.20 即可參與投票', upgradeCTA: '立即升級參加抽獎',
-                statusEligible: '✅ 符合抽獎資格', statusVoted: '👑 已完成本季投票',
-                cancel: '取消', confirm: '確認送出', close: '關閉', modalTitle: '確認投票嗎？', modalMsg: '一旦送出，將<span class="text-[#ff2d55]">無法更改</span>您的選擇。<br>確認要送出嗎？',
-                hpCta: '隱藏大獎', hpModalTitle: '隱藏大獎', hpModalNote: '※ 觸發時原定獎項取消',
-                hpModalDesc: '<p>當最終票數平手時觸發</p><p class="text-[#ff2d55] text-[20px] mt-1">全體抽出 iPhone 17 Pro</p>', 
-                ruleHeader: '活動規則',
+                prizeQty: '僅抽出 1 名', hpQty: '僅抽出 1 名', account: '帳號：', vip: 'VIP', upgradeMsg: '需達到 LV.20 即可參與投票', upgradeCTA: '立即升級參加抽獎',
+                statusEligible: '✅ 符合抽獎資格', statusVoted: '👑 已完成本季投票', cancel: '取消', confirm: '確認送出', close: '關閉', modalTitle: '確認投票嗎？', modalMsg: '一旦送出，將<span class="text-[#ff2d55]">無法更改</span>您的選擇。<br>確認要送出嗎？',
+                hpCta: '隱藏大獎', hpModalTitle: '隱藏大獎', hpModalNote: '※ 觸發時原定獎項取消', hpModalDesc: '<p>當最終票數平手時觸發</p><p class="text-[#ff2d55] text-[20px] mt-1">全體抽出 iPhone 17 Pro</p>', ruleHeader: '活動規則',
                 rules:[
                     '<li class="rule-item">1. 獎項每季更新，每人每季限投一票。</li>',
                     '<li class="rule-item">2. 僅限 VIP 20 等（含）以上用戶參與投票。</li>',
@@ -315,13 +309,9 @@
             },
             'en': {
                 mainTitle: 'VIP PRESTIGE POOL', prizeA: 'Switch', prizeB: 'PS5', btnA: 'Vote Switch', btnB: 'Vote PS5',
-                prizeQty: '1 Winner Only', hpQty: '1 Winner Only',
-                account: 'Acc: ', vip: 'VIP', upgradeMsg: 'Reach LV.20 to participate', upgradeCTA: 'Upgrade Now',
-                statusEligible: '✅ Eligible to Vote', statusVoted: '👑 Voted for this Quarter',
-                cancel: 'Cancel', confirm: 'Submit Vote', close: 'Close', modalTitle: 'Confirm Vote?', modalMsg: 'Selection <span class="text-[#ff2d55]">cannot be changed</span>.<br>Proceed?',
-                hpCta: 'Hidden Prize', hpModalTitle: 'Hidden Prize', hpModalNote: '※ Original prizes cancelled when triggered',
-                hpModalDesc: '<p>Triggered when final votes tie</p><p class="text-[#ff2d55] text-[20px] mt-1">iPhone 17 Pro for ALL</p>', 
-                ruleHeader: 'Activity Rules',
+                prizeQty: '1 Winner Only', hpQty: '1 Winner Only', account: 'Acc: ', vip: 'VIP', upgradeMsg: 'Reach LV.20 to participate', upgradeCTA: 'Upgrade Now',
+                statusEligible: '✅ Eligible to Vote', statusVoted: '👑 Voted for this Quarter', cancel: 'Cancel', confirm: 'Submit Vote', close: 'Close', modalTitle: 'Confirm Vote?', modalMsg: 'Selection <span class="text-[#ff2d55]">cannot be changed</span>.<br>Proceed?',
+                hpCta: 'Hidden Prize', hpModalTitle: 'Hidden Prize', hpModalNote: '※ Original prizes cancelled when triggered', hpModalDesc: '<p>Triggered when final votes tie</p><p class="text-[#ff2d55] text-[20px] mt-1">iPhone 17 Pro for ALL</p>', ruleHeader: 'Activity Rules',
                 rules:[
                     '<li class="rule-item">1. Prizes update quarterly. 1 vote per person.</li>',
                     '<li class="rule-item">2. Only VIP level 20 and above can participate.</li>',
@@ -342,11 +332,10 @@
         }
 
         // 漸進式載入
-        function initApp() {
+        async function initApp() {
             const urlParams = new URLSearchParams(window.location.search);
             state.uid = urlParams.get('user_id') || urlParams.get('uid');
             
-            // 測試模式邏輯
             if (urlParams.get('test_mode') === '1') {
                 state.isTestMode = true;
                 state.testUid = 'TEST_' + state.uid + '_' + Math.floor(Math.random() * 999999);
@@ -355,18 +344,19 @@
                 state.testUid = state.uid;
             }
 
-            changeLang(document.getElementById('langDropdown') ? document.getElementById('langDropdown').value : 'zh-TW');
+            changeLang('zh-TW');
 
             if(!state.uid) {
                 document.getElementById('auth-info').style.display = 'none';
                 document.getElementById('unauth-info').style.display = 'block';
+                updateChartOnly(); // 初始化圖表
                 return;
             }
 
             document.getElementById('auth-info').style.display = 'flex';
             document.getElementById('unauth-info').style.display = 'none';
 
-            // 抓取 User API
+            // 1. 抓取 User 資訊 (等級、名稱)
             fetch(`${CFG.userInfoApi}?user_id=${state.uid}`)
                 .then(r => r.json())
                 .then(res => {
@@ -376,17 +366,26 @@
                     document.getElementById('user-level').innerText = state.level;
                     updateUI();
                 })
-                .catch(e => { document.getElementById('user-name').innerText = "讀取失敗"; });
+                .catch(e => { console.error("User API failed", e); });
 
-            // 讀取本地快取
-            if (!state.isTestMode) {
-                const localVote = localStorage.getItem(`vip_vote_${state.uid}`);
-                if (localVote) { 
-                    state.hasVoted = true; 
-                    state.votedChoice = localVote; 
-                    updateUI();
-                }
-            }
+            // 2. 抓取後端真實統計票數 (Cloud Run 版)
+            fetch(`${CFG.statsApi}?user_id=${state.testUid}`)
+                .then(r => r.json())
+                .then(res => {
+                    if (res) {
+                        // 如果後端說這個 ID 投過票了，且非測試模式，則更新狀態
+                        if (res.voted && !state.isTestMode) {
+                            state.hasVoted = true;
+                            state.votedChoice = res.choice;
+                            localStorage.setItem(`vip_vote_${state.uid}`, res.choice);
+                        }
+                        // 更新真實票數
+                        state.realA = res.totalA || 0;
+                        state.realB = res.totalB || 0;
+                        updateUI(); 
+                    }
+                })
+                .catch(e => console.warn("Stats API Fetch Err", e));
         }
 
         function checkEventTime() {
@@ -404,10 +403,8 @@
         function changeLang(lang) {
             state.lang = lang;
             const d = i18n[lang] || i18n['zh-TW'];
-            
             document.getElementById('lang-btn-tw').classList.toggle('active', lang === 'zh-TW');
             document.getElementById('lang-btn-en').classList.toggle('active', lang === 'en');
-            
             document.getElementById('event-time-display').innerHTML = lang === 'en' ? EVENT_CONFIG.en : EVENT_CONFIG.zh;
             
             try {
@@ -434,13 +431,9 @@
                 document.getElementById('i18n-hp-modal-note').innerText = d.hpModalNote;
                 document.getElementById('i18n-rule-header').innerText = d.ruleHeader;
                 document.getElementById('i18n-disclaimer').innerText = d.disclaimer;
-                
-                if(!state.uid) { document.getElementById('unauth-info').innerText = lang === 'en' ? 'Please Log In' : '請登入帳號'; }
-
                 const list = document.getElementById('i18n-rules-list');
                 list.innerHTML = d.rules.join('');
             } catch (error) {}
-            
             updateUI();
         }
 
@@ -475,7 +468,6 @@
                 btnA.disabled = btnB.disabled = true;
                 btnA.classList.add('btn-locked'); btnB.classList.add('btn-locked');
             }
-
             updateChartOnly();
         }
 
@@ -506,30 +498,13 @@
             if (!state.isEventActive || state.hasVoted || state.level < 20) return;
             selectedChoice = choice;
             const modal = document.getElementById('voteModal');
-            modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('show'), 10);
+            modal.classList.add('show');
         }
 
-        function closeModal() { 
-            const modal = document.getElementById('voteModal');
-            modal.classList.remove('show');
-            setTimeout(() => modal.style.display = 'none', 300);
-        }
+        function closeModal() { document.getElementById('voteModal').classList.remove('show'); }
+        function openIphoneModal() { document.getElementById('iphoneModal').classList.add('show'); }
+        function closeIphoneModal() { document.getElementById('iphoneModal').classList.remove('show'); }
 
-        function openIphoneModal() {
-            const modal = document.getElementById('iphoneModal');
-            modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('show'), 10);
-        }
-        function closeIphoneModal() {
-            const modal = document.getElementById('iphoneModal');
-            modal.classList.remove('show');
-            setTimeout(() => modal.style.display = 'none', 300);
-        }
-
-        // ==========================================
-        // 【中轉驗證核心】送出投票邏輯
-        // ==========================================
         async function submitVote() {
             const btn = document.getElementById('confirm-btn');
             const originalText = btn.innerText;
@@ -537,7 +512,6 @@
             btn.disabled = true;
 
             try {
-                // 發送至你的中轉 API
                 const response = await fetch(CFG.handlerApi, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -553,35 +527,20 @@
                 
                 if (response.ok) {
                     showMessage(state.lang === 'en' ? 'Vote Successful!' : '投票成功！');
-                    
                     if (selectedChoice === 'A') state.realA++;
                     if (selectedChoice === 'B') state.realB++;
-
-                    if (!state.isTestMode) {
-                        localStorage.setItem(`vip_vote_${state.uid}`, selectedChoice);
-                    }
-                    
+                    if (!state.isTestMode) localStorage.setItem(`vip_vote_${state.uid}`, selectedChoice);
                     state.hasVoted = true;
                     state.votedChoice = selectedChoice;
-                    
                     closeModal();
                     updateUI();
-
-                } else if (response.status === 429) {
-                    // 後端冷卻機制
-                    showMessage(state.lang === 'en' ? 'Please wait 20 seconds.' : '⏳ 請等待冷卻時間再操作');
-                    btn.innerText = originalText;
-                    btn.disabled = false;
                 } else {
-                    // 其他後端驗證錯誤
-                    showMessage(`❌ ${result.error || (state.lang === 'en' ? 'Failed' : '驗證失敗')}`);
+                    showMessage(`❌ ${result.error || '驗證失敗'}`);
                     btn.innerText = originalText;
                     btn.disabled = false;
                     closeModal();
                 }
-
             } catch (e) {
-                console.warn("API Error", e);
                 showMessage(state.lang === 'en' ? 'Network error.' : "連線不穩，請確認網路後重試！");
                 btn.innerText = originalText;
                 btn.disabled = false;
