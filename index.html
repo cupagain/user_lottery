@@ -76,7 +76,7 @@
         .upgrade-cta { display: inline-block; padding: 8px 24px; border-radius: 50px; background: linear-gradient(90deg, #bf953f, #fcf6ba, #bf953f); background-size: 200% auto; color: #000; font-size: 14px; font-weight: 900; letter-spacing: 1px; text-decoration: none; box-shadow: 0 0 15px rgba(191, 149, 63, 0.4); animation: goldShine 3s linear infinite; }
         @keyframes goldShine { to { background-position: 200% center; } }
 
-        /* --- 隱藏大獎 CTA (持續平滑流光動畫) --- */
+        /* --- 隱藏大獎 CTA --- */
         .hidden-prize-cta {
             position: relative; width: 100%; border-radius: 16px; padding: 14px 0; margin-bottom: 35px; cursor: pointer;
             background: linear-gradient(90deg, #1f180a 0%, #5c450d 50%, #1f180a 100%); 
@@ -87,25 +87,19 @@
             transition: 0.3s;
         }
         .hidden-prize-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(191, 149, 63, 0.5); }
-        @keyframes smoothFlow {
-            0% { background-position: 200% center; }
-            100% { background-position: 0% center; }
-        }
+        @keyframes smoothFlow { 0% { background-position: 200% center; } 100% { background-position: 0% center; } }
         .hp-text { color: #fcf6ba; font-weight: 900; font-size: 16px; letter-spacing: 2px; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
 
-        /* --- 獎項展示區 (平衡尺寸) --- */
+        /* --- 獎項展示區 --- */
         .prize-container { position: relative; margin-bottom: 30px; width: 100%; }
         .img-container { position: relative; display: flex; justify-content: center; align-items: center; height: 140px; margin-bottom: 10px; }
         .bg-glow { position: absolute; width: 110px; height: 110px; background: rgba(191,149,63,0.3); filter: blur(35px); border-radius: 50%; z-index: 1; pointer-events: none; }
         
-        /* 針對不同形狀進行精細比例調校 */
         .img-switch { width: 120px; height: 120px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8)); position: relative; z-index: 2; object-fit: contain; transition: transform 0.3s;}
         .img-ps5 { width: 145px; height: 145px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8)); position: relative; z-index: 2; object-fit: contain; transition: transform 0.3s;}
         .img-switch:hover, .img-ps5:hover { transform: scale(1.05); }
         
         .prize-title { font-size: 24px; font-weight: 900; color: #fff; letter-spacing: 1px; text-shadow: 0 3px 6px rgba(0,0,0,0.9); position: relative; z-index: 2; margin-bottom: 6px;}
-        
-        /* 抽出 1 名 標籤 */
         .prize-qty-tag { background: rgba(191, 149, 63, 0.15); border: 1px solid rgba(191, 149, 63, 0.4); color: #fcf6ba; font-size: 11px; font-weight: 900; padding: 3px 12px; border-radius: 50px; display: inline-block; letter-spacing: 1px;}
 
         /* --- 完美無縫進度條 --- */
@@ -119,7 +113,6 @@
         .bar-b { position: absolute; right: 0; top: 0; height: 100%; background: linear-gradient(90deg, var(--accent-blue), #002244); transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; align-items: center; justify-content: center; z-index: 1; }
         .percent-text { font-weight: 900; font-size: 1.6rem; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.9); line-height: 1; }
         
-        /* 中間 VS 徽章 */
         .vs-label { 
             position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); 
             color: #fcf6ba; font-weight: 900; font-size: 14px; z-index: 10; 
@@ -138,13 +131,13 @@
         .btn-locked { opacity: 0.3; cursor: not-allowed; filter: grayscale(0.8); border-color: transparent;}
         .btn-active-voted { opacity: 1 !important; border-color: var(--gold-light) !important; box-shadow: inset 0 0 25px rgba(191,149,63,0.7), 0 0 15px rgba(191,149,63,0.4) !important; filter: none !important; color: #fff !important;}
 
-        /* 活動規則 (推遠距離，聚焦獎項) */
+        /* 活動規則 */
         .rule-box { background: rgba(0, 0, 0, 0.4); border-radius: 20px; padding: 25px 20px; margin-top: 50px; border: 1px solid rgba(255,255,255,0.05); }
         .rule-header { font-size: 16px; font-weight: 900; color: #fcf6ba; letter-spacing: 3px; text-align: center; margin-bottom: 16px; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
         .rule-item { color: #d1d5db !important; font-weight: 700; line-height: 2; font-size: 13px; word-break: keep-all; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         @media (max-width: 400px) { .rule-item { white-space: normal; word-break: break-word; } } 
 
-        /* 分隔線與免責聲明 (大幅降低顯眼度) */
+        /* 分隔線與免責聲明 */
         .footer-divider { width: 80%; height: 1px; background: linear-gradient(90deg, transparent, rgba(191,149,63,0.2), transparent); margin: 35px auto 20px auto; }
         .web-footer { max-width: 600px; width: 100%; padding-bottom: 40px; text-align: center; font-size: 11px; color: rgba(255,255,255,0.25); line-height: 1.6; font-weight: bold;}
         
@@ -289,11 +282,11 @@
         };
 
         // ==========================================
-        // 2. API 設定
+        // 2. API 設定 (請保留你的 UserInfo，並替換為「中轉 Handler API」)
         // ==========================================
         const CFG = {
             userInfoApi: 'https://swag-user-info-api-905468082258.asia-east1.run.app/api/badges',
-            googleSheetApi: 'https://script.google.com/macros/s/AKfycbzPFq8hdfjAlNuiRda05CbsA9Kltf9lti1vHBJAvX_hH-mM1nFJXuWyTR-xn7y7fzwT/exec' 
+            handlerApi: 'https://swag-request-handler-v3-905468082258.asia-east1.run.app/api/request' // <--- 替換成你的中轉 API
         };
 
         const MOCK_BASE = { A: 2500, B: 2480 }; 
@@ -348,7 +341,7 @@
             setTimeout(() => el.classList.remove('show'), 2500);
         }
 
-        // 漸進式載入 (Progressive Loading)
+        // 漸進式載入
         function initApp() {
             const urlParams = new URLSearchParams(window.location.search);
             state.uid = urlParams.get('user_id') || urlParams.get('uid');
@@ -362,7 +355,6 @@
                 state.testUid = state.uid;
             }
 
-            // 1. 先秒速渲染靜態畫面
             changeLang(document.getElementById('langDropdown') ? document.getElementById('langDropdown').value : 'zh-TW');
 
             if(!state.uid) {
@@ -374,7 +366,7 @@
             document.getElementById('auth-info').style.display = 'flex';
             document.getElementById('unauth-info').style.display = 'none';
 
-            // 2. 抓取快速的 User API
+            // 抓取 User API
             fetch(`${CFG.userInfoApi}?user_id=${state.uid}`)
                 .then(r => r.json())
                 .then(res => {
@@ -386,7 +378,7 @@
                 })
                 .catch(e => { document.getElementById('user-name').innerText = "讀取失敗"; });
 
-            // 3. 讀取本地快取防連點 (測試模式下略過)
+            // 讀取本地快取
             if (!state.isTestMode) {
                 const localVote = localStorage.getItem(`vip_vote_${state.uid}`);
                 if (localVote) { 
@@ -396,24 +388,11 @@
                 }
             }
 
-            // 4. 抓取較慢的 Google Sheet API (背景執行)
-            if (CFG.googleSheetApi.includes("script.google.com")) {
-                fetch(`${CFG.googleSheetApi}?user_id=${state.testUid}`)
-                    .then(r => r.json())
-                    .then(sheetRes => {
-                        if (sheetRes) {
-                            if (sheetRes.voted && !state.isTestMode) {
-                                state.hasVoted = true;
-                                state.votedChoice = sheetRes.choice;
-                                localStorage.setItem(`vip_vote_${state.uid}`, sheetRes.choice);
-                            }
-                            state.realA = sheetRes.totalA || 0;
-                            state.realB = sheetRes.totalB || 0;
-                            updateUI(); 
-                        }
-                    })
-                    .catch(e => console.warn("Google Sheet Fetch Err", e));
-            }
+            /* * 【中轉驗證修改點】 
+             * 由於你更換了架構，初始化時如果後端有提供「查詢個人投票狀態與總票數」的 API 接口，
+             * 請在這裡補上 GET 請求來覆蓋 state.realA 與 state.realB，並確保不會重複投票。
+             * (目前因為你尚未提供該接口，我先保留前端 localStorage 檢查功能)
+             */
         }
 
         function checkEventTime() {
@@ -554,54 +533,64 @@
             setTimeout(() => modal.style.display = 'none', 300);
         }
 
+        // ==========================================
+        // 【中轉驗證核心】送出投票邏輯
+        // ==========================================
         async function submitVote() {
             const btn = document.getElementById('confirm-btn');
             const originalText = btn.innerText;
-            btn.innerText = state.lang === 'en' ? "Sending..." : "處理中..."; 
+            btn.innerText = state.lang === 'en' ? "Processing..." : "驗證中..."; 
             btn.disabled = true;
 
             try {
-                const response = await fetch(CFG.googleSheetApi, {
+                // 發送至你的中轉 API (需根據你們實際的 action 或欄位名稱調整)
+                const response = await fetch(CFG.handlerApi, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         user_id: state.testUid,
                         username: state.username,
+                        action: 'VIP_LOTTERY_VOTE', // 加個 action 讓後端辨識
                         choice: selectedChoice
                     })
-                }).then(r => r.json());
+                });
+
+                const result = await response.json().catch(() => ({}));
                 
-                if(response && response.success === false && response.message === "Already voted") {
-                    showMessage(state.lang === 'en' ? 'Already Voted!' : '您已經投過票囉！');
-                } else {
+                if (response.ok) {
                     showMessage(state.lang === 'en' ? 'Vote Successful!' : '投票成功！');
+                    
                     if (selectedChoice === 'A') state.realA++;
                     if (selectedChoice === 'B') state.realB++;
-                }
 
-                if (!state.isTestMode) {
-                    localStorage.setItem(`vip_vote_${state.uid}`, selectedChoice);
+                    if (!state.isTestMode) {
+                        localStorage.setItem(`vip_vote_${state.uid}`, selectedChoice);
+                    }
+                    
+                    state.hasVoted = true;
+                    state.votedChoice = selectedChoice;
+                    
+                    closeModal();
+                    updateUI();
+
+                } else if (response.status === 429) {
+                    // 後端冷卻機制
+                    showMessage(state.lang === 'en' ? 'Please wait 20 seconds.' : '⏳ 請等待冷卻時間再操作');
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                } else {
+                    // 其他後端驗證錯誤 (例如: 等級不夠, 已經投過票)
+                    showMessage(`❌ ${result.error || (state.lang === 'en' ? 'Failed' : '驗證失敗')}`);
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    closeModal();
                 }
-                
-                state.hasVoted = true;
-                state.votedChoice = selectedChoice;
-                
-                closeModal();
-                updateUI();
 
             } catch (e) {
                 console.warn("API Error", e);
-                showMessage(state.lang === 'en' ? 'Vote Registered locally.' : "成功紀錄，但網路異常請稍後重整確認");
-                if (!state.isTestMode) {
-                    localStorage.setItem(`vip_vote_${state.uid}`, selectedChoice);
-                }
-                state.hasVoted = true;
-                state.votedChoice = selectedChoice;
-                if (selectedChoice === 'A') state.realA++;
-                if (selectedChoice === 'B') state.realB++;
-                
-                closeModal();
-                updateUI();
+                showMessage(state.lang === 'en' ? 'Network error.' : "連線不穩，請確認網路後重試！");
+                btn.innerText = originalText;
+                btn.disabled = false;
             }
         }
 
