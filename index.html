@@ -131,8 +131,16 @@
         .btn-locked { opacity: 0.3; cursor: not-allowed; filter: grayscale(0.8); border-color: transparent;}
         .btn-active-voted { opacity: 1 !important; border-color: var(--gold-light) !important; box-shadow: inset 0 0 25px rgba(191,149,63,0.7), 0 0 15px rgba(191,149,63,0.4) !important; filter: none !important; color: #fff !important;}
 
+        /* --- 結算公佈專屬樣式 --- */
+        .results-section { display: none; background: rgba(0,0,0,0.6); border: 1px solid var(--gold-primary); border-radius: 24px; padding: 35px 25px; margin-top: 20px; margin-bottom: 20px; text-align: center; box-shadow: inset 0 0 30px rgba(191,149,63,0.1); animation: fadeIn 0.8s ease-out; }
+        .winner-list { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 15px; margin-top: 20px; display: grid; gap: 12px; }
+        .winner-item { font-size: 15px; font-weight: bold; color: #fff; display: flex; justify-content: center; gap: 10px; align-items: center; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 10px; }
+        .winner-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .winner-mask { color: var(--gold-light); font-family: monospace; letter-spacing: 2px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
         /* 活動規則 */
-        .rule-box { background: rgba(0, 0, 0, 0.4); border-radius: 20px; padding: 25px 20px; margin-top: 50px; border: 1px solid rgba(255,255,255,0.05); }
+        .rule-box { background: rgba(0, 0, 0, 0.4); border-radius: 20px; padding: 25px 20px; margin-top: 30px; border: 1px solid rgba(255,255,255,0.05); }
         .rule-header { font-size: 16px; font-weight: 900; color: #fcf6ba; letter-spacing: 3px; text-align: center; margin-bottom: 16px; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
         .rule-item { color: #d1d5db !important; font-weight: 700; line-height: 2; font-size: 13px; word-break: keep-all; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         @media (max-width: 400px) { .rule-item { white-space: normal; word-break: break-word; } } 
@@ -254,9 +262,23 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3 md:gap-5 btn-wrapper">
+        <!-- 投票按鈕區 -->
+        <div id="btn-wrapper" class="grid grid-cols-2 gap-3 md:gap-5 btn-wrapper">
             <button id="btn-vote-a" onclick="openVoteModal('A')" class="btn-premium btn-a-red btn-locked" disabled>選擇 Switch</button>
             <button id="btn-vote-b" onclick="openVoteModal('B')" class="btn-premium btn-b-blue btn-locked" disabled>選擇 PS5</button>
+        </div>
+
+        <!-- 結算結果區 (活動結束後顯示) -->
+        <div id="results-section" class="results-section">
+            <h3 id="i18n-result-title" class="text-[#fcf6ba] text-2xl font-black tracking-widest mb-4">🎉 抽獎結果公佈</h3>
+            <p class="text-gray-300 font-bold text-[15px] mb-5">
+                <span id="i18n-result-desc-pre">本次由</span>
+                <span id="win-team" class="text-white text-xl px-1 font-black underline decoration-[#bf953f] decoration-2 underline-offset-4">---</span>
+                <span id="i18n-result-desc-post">陣營勝出！</span>
+            </p>
+            <div class="winner-list" id="winner-list-container">
+                <!-- 動態生成的得獎名單 -->
+            </div>
         </div>
 
         <div class="rule-box">
@@ -270,9 +292,9 @@
         </footer>
     </div>
 
-<script>
+    <script>
         // ==========================================
-        // 1. 活動期間與 API 設定
+        // 1. 抽獎期間設定 (超過 end 則顯示結算畫面)
         // ==========================================
         const EVENT_CONFIG = {
             start: new Date('2026-03-10T00:00:00+08:00'),
@@ -281,15 +303,31 @@
             en: '<div class="font-bold text-[14px] tracking-widest">Quarterly Lottery</div><div class="text-[12px] font-bold mt-1 tracking-wider opacity-90">Mar 10 00:00 - Mar 20 23:59</div>'
         };
 
+        // ==========================================
+        // 2. API 設定
+        // ==========================================
         const CFG = {
             userInfoApi: 'https://swag-user-info-api-905468082258.asia-east1.run.app/api/badges',
             handlerApi: 'https://vip-lottery-api-905468082258.asia-east1.run.app/api/request',
-            statsApi: 'https://vip-lottery-api-905468082258.asia-east1.run.app/api/stats' // <--- 新增此行
+            statsApi: 'https://vip-lottery-api-905468082258.asia-east1.run.app/api/stats'
         };
 
         const MOCK_BASE = { A: 0, B: 0 }; // 0 代表完全顯示真實數據
         let state = { uid: null, testUid: null, username: '---', level: 0, hasVoted: false, votedChoice: null, isEventActive: true, lang: 'zh-TW', realA: 0, realB: 0, isTestMode: false };
         let selectedChoice = null;
+
+        // --- 結算用：預設/模擬 得獎名單 ---
+        const WINNER_MOCK_LIST =[
+            { name: "JohnDoe99" },
+            { name: "VIP_Alice" }
+        ];
+
+        // 馬賽克功能 (隱藏中間字元)
+        function maskName(name) {
+            if (!name) return '***';
+            if (name.length <= 3) return name.charAt(0) + '***';
+            return name.substring(0, 2) + '***' + name.substring(name.length - 2);
+        }
 
         const i18n = {
             'zh-TW': {
@@ -305,7 +343,8 @@
                     '<li class="rule-item">5. 若最終票數相同，將從全投票用戶中抽「隱藏大獎」。</li>',
                     '<li class="rule-item">6. 中獎用戶須於指定時間內親自至本公司領獎。</li>'
                 ],
-                disclaimer: '主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利。'
+                disclaimer: '主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利。',
+                resultTitle: '🎉 抽獎結果公佈', resultDescPre: '本次由', resultDescPost: '陣營勝出！', won: '幸運獲得'
             },
             'en': {
                 mainTitle: 'VIP PRESTIGE POOL', prizeA: 'Switch', prizeB: 'PS5', btnA: 'Vote Switch', btnB: 'Vote PS5',
@@ -320,7 +359,8 @@
                     '<li class="rule-item">5. If votes tie, "Hidden Prize" is drawn for all.</li>',
                     '<li class="rule-item">6. Winners must collect prizes in person at HQ.</li>'
                 ],
-                disclaimer: 'The organizer reserves the right to change event details at any time.'
+                disclaimer: 'The organizer reserves the right to change event details at any time.',
+                resultTitle: '🎉 Lucky Draw Results', resultDescPre: 'Winner:', resultDescPost: '!', won: 'Won'
             }
         };
 
@@ -331,7 +371,6 @@
             setTimeout(() => el.classList.remove('show'), 2500);
         }
 
-        // 漸進式載入
         async function initApp() {
             const urlParams = new URLSearchParams(window.location.search);
             state.uid = urlParams.get('user_id') || urlParams.get('uid');
@@ -349,14 +388,13 @@
             if(!state.uid) {
                 document.getElementById('auth-info').style.display = 'none';
                 document.getElementById('unauth-info').style.display = 'block';
-                updateChartOnly(); // 初始化圖表
+                updateChartOnly(); 
                 return;
             }
 
             document.getElementById('auth-info').style.display = 'flex';
             document.getElementById('unauth-info').style.display = 'none';
 
-            // 1. 抓取 User 資訊 (等級、名稱)
             fetch(`${CFG.userInfoApi}?user_id=${state.uid}`)
                 .then(r => r.json())
                 .then(res => {
@@ -368,18 +406,15 @@
                 })
                 .catch(e => { console.error("User API failed", e); });
 
-            // 2. 抓取後端真實統計票數 (Cloud Run 版)
             fetch(`${CFG.statsApi}?user_id=${state.testUid}`)
                 .then(r => r.json())
                 .then(res => {
                     if (res) {
-                        // 如果後端說這個 ID 投過票了，且非測試模式，則更新狀態
                         if (res.voted && !state.isTestMode) {
                             state.hasVoted = true;
                             state.votedChoice = res.choice;
                             localStorage.setItem(`vip_vote_${state.uid}`, res.choice);
                         }
-                        // 更新真實票數
                         state.realA = res.totalA || 0;
                         state.realB = res.totalB || 0;
                         updateUI(); 
@@ -431,9 +466,18 @@
                 document.getElementById('i18n-hp-modal-note').innerText = d.hpModalNote;
                 document.getElementById('i18n-rule-header').innerText = d.ruleHeader;
                 document.getElementById('i18n-disclaimer').innerText = d.disclaimer;
+                
+                // 結算區翻譯
+                document.getElementById('i18n-result-title').innerText = d.resultTitle;
+                document.getElementById('i18n-result-desc-pre').innerText = d.resultDescPre;
+                document.getElementById('i18n-result-desc-post').innerText = d.resultDescPost;
+
+                if(!state.uid) { document.getElementById('unauth-info').innerText = lang === 'en' ? 'Please Log In' : '請登入帳號'; }
+
                 const list = document.getElementById('i18n-rules-list');
                 list.innerHTML = d.rules.join('');
             } catch (error) {}
+            
             updateUI();
         }
 
@@ -492,18 +536,77 @@
             const voteTxt = state.lang === 'en' ? ' Votes' : ' 票';
             document.getElementById('count-a').innerText = `${countA.toLocaleString()}${voteTxt}`;
             document.getElementById('count-b').innerText = `${countB.toLocaleString()}${voteTxt}`;
+
+            // ==========================================
+            // 🏅 結算顯示邏輯 (Event Over)
+            // ==========================================
+            const now = new Date();
+            const btnWrapper = document.getElementById('btn-wrapper');
+            const resultsSection = document.getElementById('results-section');
+            
+            if (!state.isEventActive && now > EVENT_CONFIG.end) {
+                btnWrapper.style.display = 'none'; // 隱藏按鈕
+                resultsSection.style.display = 'block'; // 顯示結算框
+                
+                const winTeamEl = document.getElementById('win-team');
+                let prizeName = '';
+                
+                if (pA === 50 && pB === 50) {
+                    winTeamEl.innerText = state.lang === 'en' ? "iPhone 17 Pro (Tie)" : "隱藏大獎 (iPhone 17 Pro)";
+                    winTeamEl.style.color = "#fcf6ba"; // 金色
+                    prizeName = 'iPhone 17 Pro';
+                } else if (pA > pB) {
+                    winTeamEl.innerText = state.lang === 'en' ? "Team Switch" : "Switch 陣營";
+                    winTeamEl.style.color = "#ff9999"; // 紅色
+                    prizeName = 'Switch';
+                } else {
+                    winTeamEl.innerText = state.lang === 'en' ? "Team PS5" : "PS5 陣營";
+                    winTeamEl.style.color = "#99c2ff"; // 藍色
+                    prizeName = 'PS5';
+                }
+
+                // 渲染馬賽克得獎名單
+                const container = document.getElementById('winner-list-container');
+                const wonText = i18n[state.lang].won;
+                container.innerHTML = WINNER_MOCK_LIST.map(w => 
+                    `<div class="winner-item">
+                        <span class="winner-mask">${maskName(w.name)}</span> 
+                        <span class="text-[12px] text-gray-400">${wonText}</span> 
+                        <span class="text-[#fcf6ba]">${prizeName}</span>
+                    </div>`
+                ).join('');
+
+            } else {
+                // 活動進行中
+                btnWrapper.style.display = 'grid';
+                resultsSection.style.display = 'none';
+            }
         }
 
         function openVoteModal(choice) {
             if (!state.isEventActive || state.hasVoted || state.level < 20) return;
             selectedChoice = choice;
             const modal = document.getElementById('voteModal');
-            modal.classList.add('show');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
         }
 
-        function closeModal() { document.getElementById('voteModal').classList.remove('show'); }
-        function openIphoneModal() { document.getElementById('iphoneModal').classList.add('show'); }
-        function closeIphoneModal() { document.getElementById('iphoneModal').classList.remove('show'); }
+        function closeModal() { 
+            const modal = document.getElementById('voteModal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        function openIphoneModal() {
+            const modal = document.getElementById('iphoneModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
+        }
+        function closeIphoneModal() {
+            const modal = document.getElementById('iphoneModal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
 
         async function submitVote() {
             const btn = document.getElementById('confirm-btn');
