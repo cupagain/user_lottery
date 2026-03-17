@@ -119,14 +119,7 @@
             background: #0d0d0d; width: 38px; height: 38px; border-radius: 50%; 
             display: flex; justify-content: center; align-items: center; 
             border: 2px solid var(--gold-primary); box-shadow: 0 0 15px rgba(0,0,0,1); 
-            transition: left 1s cubic-bezier(0.34, 1.56, 0.64, 1); /* 動態移動過渡 */
         }
-
-        /* 結算結果區塊 */
-        .results-section { display: none; background: rgba(0,0,0,0.6); border: 1px solid var(--gold-primary); border-radius: 24px; padding: 30px 20px; margin-top: 20px; text-align: center; box-shadow: inset 0 0 30px rgba(191,149,63,0.1); }
-        .winner-list { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 15px; margin-top: 20px; display: grid; gap: 10px; }
-        .winner-item { font-size: 16px; font-weight: bold; color: #fff; display: flex; justify-content: center; gap: 10px; align-items: center; }
-        .winner-mask { color: var(--gold-light); font-family: monospace; letter-spacing: 2px; }
 
         /* 投票按鈕 */
         .btn-wrapper { margin-bottom: 20px; }
@@ -143,6 +136,12 @@
         .rule-header { font-size: 16px; font-weight: 900; color: #fcf6ba; letter-spacing: 3px; text-align: center; margin-bottom: 16px; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
         .rule-item { color: #d1d5db !important; font-weight: 700; line-height: 2; font-size: 13px; word-break: keep-all; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         @media (max-width: 400px) { .rule-item { white-space: normal; word-break: break-word; } } 
+
+        /* 結算結果區塊 */
+        .results-section { display: none; background: rgba(0,0,0,0.6); border: 1px solid var(--gold-primary); border-radius: 24px; padding: 30px 20px; margin-top: 20px; text-align: center; box-shadow: inset 0 0 30px rgba(191,149,63,0.1); }
+        .winner-list { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 15px; margin-top: 20px; display: grid; gap: 10px; }
+        .winner-item { font-size: 16px; font-weight: bold; color: #fff; display: flex; justify-content: center; gap: 10px; align-items: center; }
+        .winner-mask { color: var(--gold-light); font-family: monospace; letter-spacing: 2px; }
 
         /* 分隔線與免責聲明 */
         .footer-divider { width: 80%; height: 1px; background: linear-gradient(90deg, transparent, rgba(191,149,63,0.2), transparent); margin: 35px auto 20px auto; }
@@ -253,7 +252,7 @@
             <div class="progress-container">
                 <div id="bar-a" class="bar-a" style="width: 50%"><span id="percent-a" class="percent-text">50%</span></div>
                 <div id="bar-b" class="bar-b" style="width: 50%"><span id="percent-b" class="percent-text">50%</span></div>
-                <!-- 【解決痛點 2】: 動態移動 VS 徽章 -->
+                <!-- VS 動態跟隨標籤 -->
                 <div id="vs-label" class="vs-label" style="left: 50%">VS</div>
             </div>
             <div class="flex justify-between px-2 mt-3 text-[12px] font-bold text-gray-400 tracking-widest uppercase whitespace-nowrap">
@@ -262,7 +261,7 @@
             </div>
         </div>
 
-        <!-- 投票區 -->
+        <!-- 投票按鈕區 -->
         <div id="btn-wrapper" class="grid grid-cols-2 gap-3 md:gap-5 btn-wrapper">
             <button id="btn-vote-a" onclick="openVoteModal('A')" class="btn-premium btn-a-red btn-locked" disabled>選擇 Switch</button>
             <button id="btn-vote-b" onclick="openVoteModal('B')" class="btn-premium btn-b-blue btn-locked" disabled>選擇 PS5</button>
@@ -270,8 +269,12 @@
 
         <!-- 結算結果區 (活動結束後顯示) -->
         <div id="results-section" class="results-section">
-            <h3 class="text-[#fcf6ba] text-2xl font-black tracking-widest mb-2">🎉 抽獎結果公佈</h3>
-            <p id="winner-pool-desc" class="text-gray-300 font-bold text-sm mb-4">本次由 <span id="win-team" class="text-white text-lg">---</span> 陣營勝出！</p>
+            <h3 id="i18n-result-title" class="text-[#fcf6ba] text-2xl font-black tracking-widest mb-4">🎉 抽獎結果公佈</h3>
+            <p class="text-gray-300 font-bold text-[15px] mb-5">
+                <span id="i18n-result-desc-pre">本次由</span>
+                <span id="win-team" class="text-white text-xl px-1 font-black underline decoration-[#bf953f] decoration-2 underline-offset-4">---</span>
+                <span id="i18n-result-desc-post">陣營勝出！</span>
+            </p>
             <div class="winner-list" id="winner-list-container">
                 <!-- 動態填入中獎者 -->
             </div>
@@ -289,46 +292,45 @@
     </div>
 
     <script>
-        // ------------------------------------
-        // 1. 活動時間設定 (控制結算與否)
-        // ------------------------------------
+        // ==========================================
+        // 1. 活動期間與結算名單設定
+        // ==========================================
         const EVENT_CONFIG = {
             start: new Date('2026-03-10T00:00:00+08:00'),
-            end:   new Date('2026-03-16T23:59:59+08:00'), // 超過此時間顯示結算名單
-            zh: '<div class="font-bold text-[14px] tracking-widest">本季抽獎期間</div><div class="text-[12px] font-bold mt-1 tracking-wider opacity-90">3/10 00:00 - 3/16 23:59</div>',
-            en: '<div class="font-bold text-[14px] tracking-widest">Quarterly Lottery</div><div class="text-[12px] font-bold mt-1 tracking-wider opacity-90">Mar 10 00:00 - Mar 16 23:59</div>'
+            end:   new Date('2026-03-20T23:59:59+08:00'), // 時間到期後自動顯示結算
+            zh: '<div class="font-bold text-[14px] tracking-widest">本季抽獎期間</div><div class="text-[12px] font-bold mt-1 tracking-wider opacity-90">3/10 00:00 - 3/20 23:59</div>',
+            en: '<div class="font-bold text-[14px] tracking-widest">Quarterly Lottery</div><div class="text-[12px] font-bold mt-1 tracking-wider opacity-90">Mar 10 00:00 - Mar 20 23:59</div>'
         };
 
+        // 填寫中獎者名單 (活動結束後顯示)。若尚未抽出，請保持陣列為空[]。
+        // 例如: ["SWAG_User123", "VIP_888"]
+        const EVENT_WINNERS =[];
+
+        // ==========================================
+        // 2. API 設定
+        // ==========================================
         const CFG = {
             userInfoApi: 'https://swag-user-info-api-905468082258.asia-east1.run.app/api/badges',
             handlerApi: 'https://vip-lottery-api-905468082258.asia-east1.run.app/api/request',
-            statsApi: 'https://vip-lottery-api-905468082258.asia-east1.run.app/api/stats' 
+            statsApi: 'https://vip-lottery-api-905468082258.asia-east1.run.app/api/stats'
         };
 
+        const MOCK_BASE = { A: 0, B: 0 }; 
         let state = { uid: null, testUid: null, username: '---', level: 0, hasVoted: false, votedChoice: null, isEventActive: true, lang: 'zh-TW', realA: 0, realB: 0, isTestMode: false };
         let selectedChoice = null;
 
-        // 模擬結算名單
-        const MOCK_WINNERS =[
-            { name: "JohnDoe99", prize: "Switch" },
-            { name: "VIP_Alice", prize: "PS5" }
-        ];
-
         function maskName(name) {
-            if (name.length <= 2) return name + '***';
+            if (!name) return '***';
+            if (name.length <= 3) return name.charAt(0) + '***';
             return name.substring(0, 2) + '***' + name.substring(name.length - 2);
         }
 
         const i18n = {
             'zh-TW': {
                 mainTitle: 'VIP 專屬抽獎池', prizeA: 'Switch', prizeB: 'PS5', btnA: '選擇 Switch', btnB: '選擇 PS5',
-                prizeQty: '僅抽出 1 名', hpQty: '僅抽出 1 名',
-                account: '帳號：', vip: 'VIP', upgradeMsg: '需達到 LV.20 即可參與投票', upgradeCTA: '立即升級參加抽獎',
-                statusEligible: '✅ 符合抽獎資格', statusVoted: '👑 已完成本季投票',
-                cancel: '取消', confirm: '確認送出', close: '關閉', modalTitle: '確認投票嗎？', modalMsg: '一旦送出，將<span class="text-[#ff2d55]">無法更改</span>您的選擇。<br>確認要送出嗎？',
-                hpCta: '隱藏大獎', hpModalTitle: '隱藏大獎', hpModalNote: '※ 觸發時原定獎項取消',
-                hpModalDesc: '<p>當最終票數平手時觸發</p><p class="text-[#ff2d55] text-[20px] mt-1">全體抽出 iPhone 17 Pro</p>', 
-                ruleHeader: '活動規則',
+                prizeQty: '僅抽出 1 名', hpQty: '僅抽出 1 名', account: '帳號：', vip: 'VIP', upgradeMsg: '需達到 LV.20 即可參與投票', upgradeCTA: '立即升級參加抽獎',
+                statusEligible: '✅ 符合抽獎資格', statusVoted: '👑 已完成本季投票', cancel: '取消', confirm: '確認送出', close: '關閉', modalTitle: '確認投票嗎？', modalMsg: '一旦送出，將<span class="text-[#ff2d55]">無法更改</span>您的選擇。<br>確認要送出嗎？',
+                hpCta: '隱藏大獎', hpModalTitle: '隱藏大獎', hpModalNote: '※ 觸發時原定獎項取消', hpModalDesc: '<p>當最終票數平手時觸發</p><p class="text-[#ff2d55] text-[20px] mt-1">全體抽出 iPhone 17 Pro</p>', ruleHeader: '活動規則',
                 rules:[
                     '<li class="rule-item">1. 獎項每季更新，每人每季限投一票。</li>',
                     '<li class="rule-item">2. 僅限 VIP 20 等（含）以上用戶參與投票。</li>',
@@ -337,17 +339,14 @@
                     '<li class="rule-item">5. 若最終票數相同，將從全投票用戶中抽「隱藏大獎」。</li>',
                     '<li class="rule-item">6. 中獎用戶須於指定時間內親自至本公司領獎。</li>'
                 ],
-                disclaimer: '主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利。'
+                disclaimer: '主辦單位保留隨時變更活動辦法、獎項內容，以及暫停、延長、提前終止本活動之權利。',
+                resultTitle: '🎉 抽獎結果公佈', resultDescPre: '本次由', resultDescPost: '陣營勝出！', won: '獲得', calc: '名單結算中...'
             },
             'en': {
                 mainTitle: 'VIP PRESTIGE POOL', prizeA: 'Switch', prizeB: 'PS5', btnA: 'Vote Switch', btnB: 'Vote PS5',
-                prizeQty: '1 Winner Only', hpQty: '1 Winner Only',
-                account: 'Acc: ', vip: 'VIP', upgradeMsg: 'Reach LV.20 to participate', upgradeCTA: 'Upgrade Now',
-                statusEligible: '✅ Eligible to Vote', statusVoted: '👑 Voted for this Quarter',
-                cancel: 'Cancel', confirm: 'Submit Vote', close: 'Close', modalTitle: 'Confirm Vote?', modalMsg: 'Selection <span class="text-[#ff2d55]">cannot be changed</span>.<br>Proceed?',
-                hpCta: 'Hidden Prize', hpModalTitle: 'Hidden Prize', hpModalNote: '※ Original prizes cancelled when triggered',
-                hpModalDesc: '<p>Triggered when final votes tie</p><p class="text-[#ff2d55] text-[20px] mt-1">iPhone 17 Pro for ALL</p>', 
-                ruleHeader: 'Activity Rules',
+                prizeQty: '1 Winner Only', hpQty: '1 Winner Only', account: 'Acc: ', vip: 'VIP', upgradeMsg: 'Reach LV.20 to participate', upgradeCTA: 'Upgrade Now',
+                statusEligible: '✅ Eligible to Vote', statusVoted: '👑 Voted for this Quarter', cancel: 'Cancel', confirm: 'Submit Vote', close: 'Close', modalTitle: 'Confirm Vote?', modalMsg: 'Selection <span class="text-[#ff2d55]">cannot be changed</span>.<br>Proceed?',
+                hpCta: 'Hidden Prize', hpModalTitle: 'Hidden Prize', hpModalNote: '※ Original prizes cancelled when triggered', hpModalDesc: '<p>Triggered when final votes tie</p><p class="text-[#ff2d55] text-[20px] mt-1">iPhone 17 Pro for ALL</p>', ruleHeader: 'Activity Rules',
                 rules:[
                     '<li class="rule-item">1. Prizes update quarterly. 1 vote per person.</li>',
                     '<li class="rule-item">2. Only VIP level 20 and above can participate.</li>',
@@ -356,35 +355,30 @@
                     '<li class="rule-item">5. If votes tie, "Hidden Prize" is drawn for all.</li>',
                     '<li class="rule-item">6. Winners must collect prizes in person at HQ.</li>'
                 ],
-                disclaimer: 'The organizer reserves the right to change event details at any time.'
+                disclaimer: 'The organizer reserves the right to change event details at any time.',
+                resultTitle: '🎉 Lucky Draw Results', resultDescPre: 'Winner:', resultDescPost: '!', won: 'Won', calc: 'Calculating results...'
             }
         };
 
-        // 【解決痛點 3】: 解析被包裝或長度異常的 User ID
-        const getCleanUserId = () => {
-            const params = new URLSearchParams(window.location.search);
-            let rawId = params.get('user_id') || params.get('uid');
-            if (!rawId) {
-                const source = params.get('source');
-                if (source) {
-                    const decoded = decodeURIComponent(source);
-                    const match = decoded.match(/[?&](user_id|uid)=([a-zA-Z0-9]+)/i);
-                    if (match) rawId = match[2];
-                }
-            }
-            return rawId && rawId.length >= 48 ? rawId.substring(12, rawId.length - 12) : rawId;
-        };
+        function showMessage(msg) {
+            const el = document.getElementById('customMsg');
+            el.innerText = msg;
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 2500);
+        }
 
         async function initApp() {
-            state.uid = getCleanUserId();
-            
-            // 測試模式邏輯
             const urlParams = new URLSearchParams(window.location.search);
+            let rawUid = urlParams.get('user_id') || urlParams.get('uid');
+            
+            // 測試模式處理：強制建立一個測試帳號、賦予 99 等
             if (urlParams.get('test_mode') === '1') {
                 state.isTestMode = true;
-                state.testUid = 'TEST_' + (state.uid || 'guest') + '_' + Math.floor(Math.random() * 999999);
+                state.uid = rawUid || 'guest_test'; 
+                state.testUid = 'TEST_' + state.uid + '_' + Math.floor(Math.random() * 999999);
                 document.getElementById('test-mode-badge').style.display = 'block';
             } else {
+                state.uid = rawUid;
                 state.testUid = state.uid;
             }
 
@@ -400,38 +394,49 @@
             document.getElementById('auth-info').style.display = 'flex';
             document.getElementById('unauth-info').style.display = 'none';
 
-            fetch(`${CFG.userInfoApi}?user_id=${state.uid}`)
-                .then(r => r.json())
-                .then(res => {
-                    state.username = res.username || state.uid.substring(0, 6);
-                    state.level = res.level || 0;
-                    
-                    // 【解決痛點 1】: 測試模式強制覆寫等級 99 以解鎖按鈕
-                    if (state.isTestMode) {
-                        state.level = 99;
-                    }
-                    
-                    document.getElementById('user-name').innerText = state.username;
-                    document.getElementById('user-level').innerText = state.level;
+            if (state.isTestMode) {
+                state.username = "Test User";
+                state.level = 99;
+                document.getElementById('user-name').innerText = state.username;
+                document.getElementById('user-level').innerText = state.level;
+                updateUI();
+            } else {
+                fetch(`${CFG.userInfoApi}?user_id=${state.uid}`)
+                    .then(r => r.json())
+                    .then(res => {
+                        state.username = res.username || state.uid.substring(0, 6);
+                        state.level = res.level || 0;
+                        document.getElementById('user-name').innerText = state.username;
+                        document.getElementById('user-level').innerText = state.level;
+                        updateUI();
+                    })
+                    .catch(e => { document.getElementById('user-name').innerText = "讀取失敗"; });
+                
+                const localVote = localStorage.getItem(`vip_vote_${state.uid}`);
+                if (localVote) { 
+                    state.hasVoted = true; 
+                    state.votedChoice = localVote; 
                     updateUI();
-                })
-                .catch(e => { console.error("User API failed", e); });
+                }
+            }
 
-            fetch(`${CFG.statsApi}?user_id=${state.testUid}`)
-                .then(r => r.json())
-                .then(res => {
-                    if (res) {
-                        if (res.voted && !state.isTestMode) {
-                            state.hasVoted = true;
-                            state.votedChoice = res.choice;
-                            localStorage.setItem(`vip_vote_${state.uid}`, res.choice);
+            try {
+                fetch(`${CFG.statsApi}?user_id=${state.testUid}`)
+                    .then(r => r.json())
+                    .then(res => {
+                        if (res) {
+                            if (res.voted && !state.isTestMode) {
+                                state.hasVoted = true;
+                                state.votedChoice = res.choice;
+                                localStorage.setItem(`vip_vote_${state.uid}`, res.choice);
+                            }
+                            state.realA = res.totalA || 0;
+                            state.realB = res.totalB || 0;
+                            updateUI(); 
                         }
-                        state.realA = res.totalA || 0;
-                        state.realB = res.totalB || 0;
-                        updateUI(); 
-                    }
-                })
-                .catch(e => console.warn("Stats API Fetch Err", e));
+                    })
+                    .catch(e => console.warn("Stats API Fetch Err", e));
+            } catch(e) {}
         }
 
         function checkEventTime() {
@@ -480,6 +485,10 @@
                 document.getElementById('i18n-rule-header').innerText = d.ruleHeader;
                 document.getElementById('i18n-disclaimer').innerText = d.disclaimer;
                 
+                document.getElementById('i18n-result-title').innerText = d.resultTitle;
+                document.getElementById('i18n-result-desc-pre').innerText = d.resultDescPre;
+                document.getElementById('i18n-result-desc-post').innerText = d.resultDescPost;
+
                 if(!state.uid) { document.getElementById('unauth-info').innerText = lang === 'en' ? 'Please Log In' : '請登入帳號'; }
 
                 const list = document.getElementById('i18n-rules-list');
@@ -499,42 +508,47 @@
             const upgWrap = document.getElementById('upgrade-wrapper');
             const statusBadge = document.getElementById('user-status');
 
-            if (state.level < 20 && !state.hasVoted) {
+            if (state.isTestMode) {
+                // 測試模式：永遠保持按鈕開啟，不被 hasVoted 或 level 卡住
                 statusBadge.style.display = 'none';
-                upgWrap.style.display = 'block';
-            } else {
                 upgWrap.style.display = 'none';
-            }
-
-            if (state.hasVoted) {
-                renderStatus('eligible', d.statusVoted);
-                btnA.disabled = btnB.disabled = true;
-                btnA.className = btnB.className = "btn-premium btn-locked";
-                if(state.votedChoice === 'A') btnA.classList.add('btn-a-red', 'btn-active-voted');
-                else btnB.classList.add('btn-b-blue', 'btn-active-voted');
-            } else if (state.isEventActive && state.level >= 20) {
-                renderStatus('eligible', d.statusEligible);
                 btnA.disabled = btnB.disabled = false;
-                btnA.classList.remove('btn-locked'); btnB.classList.remove('btn-locked');
+                btnA.classList.remove('btn-locked', 'btn-active-voted'); 
+                btnB.classList.remove('btn-locked', 'btn-active-voted');
             } else {
-                btnA.disabled = btnB.disabled = true;
-                btnA.classList.add('btn-locked'); btnB.classList.add('btn-locked');
+                // 正常模式
+                if (state.level < 20 && !state.hasVoted) {
+                    statusBadge.style.display = 'none';
+                    upgWrap.style.display = 'block';
+                } else {
+                    upgWrap.style.display = 'none';
+                }
+
+                if (state.hasVoted) {
+                    renderStatus('eligible', d.statusVoted);
+                    btnA.disabled = btnB.disabled = true;
+                    btnA.className = btnB.className = "btn-premium btn-locked";
+                    if(state.votedChoice === 'A') btnA.classList.add('btn-a-red', 'btn-active-voted');
+                    else btnB.classList.add('btn-b-blue', 'btn-active-voted');
+                } else if (state.isEventActive && state.level >= 20) {
+                    renderStatus('eligible', d.statusEligible);
+                    btnA.disabled = btnB.disabled = false;
+                    btnA.classList.remove('btn-locked'); btnB.classList.remove('btn-locked');
+                } else {
+                    btnA.disabled = btnB.disabled = true;
+                    btnA.classList.add('btn-locked'); btnB.classList.add('btn-locked');
+                }
             }
 
             updateChartOnly();
         }
 
         function updateChartOnly() {
-            let totalA = state.realA;
-            let totalB = state.realB;
+            let countA = MOCK_BASE.A + state.realA;
+            let countB = MOCK_BASE.B + state.realB;
             
-            if(state.isTestMode && state.votedChoice) {
-                if(state.votedChoice === 'A') totalA++;
-                if(state.votedChoice === 'B') totalB++;
-            }
-
-            let total = totalA + totalB;
-            let pA = total > 0 ? Math.round((totalA / total) * 100) : 50;
+            let total = countA + countB;
+            let pA = total > 0 ? Math.round((countA / total) * 100) : 50;
             let pB = 100 - pA;
 
             document.getElementById('bar-a').style.width = pA + '%';
@@ -542,17 +556,18 @@
             document.getElementById('percent-a').innerText = pA + '%';
             document.getElementById('percent-b').innerText = pB + '%';
             
-            // 【解決痛點 2】: 動態移動 VS 徽章
             const vsLabel = document.getElementById('vs-label');
             if (vsLabel) {
                 vsLabel.style.left = pA + '%';
             }
             
             const voteTxt = state.lang === 'en' ? ' Votes' : ' 票';
-            document.getElementById('count-a').innerText = `${totalA.toLocaleString()}${voteTxt}`;
-            document.getElementById('count-b').innerText = `${totalB.toLocaleString()}${voteTxt}`;
+            document.getElementById('count-a').innerText = `${countA.toLocaleString()}${voteTxt}`;
+            document.getElementById('count-b').innerText = `${countB.toLocaleString()}${voteTxt}`;
 
-            // 結算顯示邏輯 (Event Over)
+            // ==========================================
+            // 🏅 結算顯示邏輯 (Event Over)
+            // ==========================================
             const now = new Date();
             const btnWrapper = document.getElementById('btn-wrapper');
             const resultsSection = document.getElementById('results-section');
@@ -566,22 +581,33 @@
                 
                 if (pA === 50 && pB === 50) {
                     winTeamEl.innerText = state.lang === 'en' ? "iPhone 17 Pro (Tie)" : "隱藏大獎 (iPhone 17 Pro)";
-                    winTeamEl.style.color = "#fcf6ba";
+                    winTeamEl.style.color = "#fcf6ba"; 
                     prizeName = 'iPhone 17 Pro';
                 } else if (pA > pB) {
                     winTeamEl.innerText = state.lang === 'en' ? "Team Switch" : "Switch 陣營";
-                    winTeamEl.style.color = "#ff9999";
+                    winTeamEl.style.color = "#ff9999"; 
                     prizeName = 'Switch';
                 } else {
                     winTeamEl.innerText = state.lang === 'en' ? "Team PS5" : "PS5 陣營";
-                    winTeamEl.style.color = "#99c2ff";
+                    winTeamEl.style.color = "#99c2ff"; 
                     prizeName = 'PS5';
                 }
 
                 const container = document.getElementById('winner-list-container');
-                container.innerHTML = MOCK_WINNERS.map(w => 
-                    `<div class="winner-item"><span class="winner-mask">${maskName(w.name)}</span> <span class="text-[12px] text-gray-400">獲得</span> <span class="text-[#fcf6ba]">${pA === 50 ? 'iPhone 17 Pro' : (pA > pB ? 'Switch' : 'PS5')}</span></div>`
-                ).join('');
+                if (EVENT_WINNERS.length === 0) {
+                    // 若陣列為空，顯示結算中
+                    container.innerHTML = `<div class="text-gray-400 font-bold py-4 text-sm">${i18n[state.lang].calc}</div>`;
+                } else {
+                    // 若填入名單，渲染得獎者
+                    const wonText = i18n[state.lang].won;
+                    container.innerHTML = EVENT_WINNERS.map(name => 
+                        `<div class="winner-item">
+                            <span class="winner-mask">${maskName(name)}</span> 
+                            <span class="text-[12px] text-gray-400">${wonText}</span> 
+                            <span class="text-[#fcf6ba]">${prizeName}</span>
+                        </div>`
+                    ).join('');
+                }
                 return;
             } else {
                 btnWrapper.style.display = 'grid';
@@ -590,7 +616,8 @@
         }
 
         function openVoteModal(choice) {
-            if (!state.isEventActive || state.hasVoted || state.level < 20) return;
+            if (!state.isEventActive) return;
+            if (!state.isTestMode && (state.hasVoted || state.level < 20)) return;
             selectedChoice = choice;
             const modal = document.getElementById('voteModal');
             modal.style.display = 'flex';
@@ -638,11 +665,22 @@
                     showMessage(state.lang === 'en' ? 'Vote Successful!' : '投票成功！');
                     if (selectedChoice === 'A') state.realA++;
                     if (selectedChoice === 'B') state.realB++;
-                    if (!state.isTestMode) localStorage.setItem(`vip_vote_${state.uid}`, selectedChoice);
-                    state.hasVoted = true;
-                    state.votedChoice = selectedChoice;
+                    
+                    if (!state.isTestMode) {
+                        localStorage.setItem(`vip_vote_${state.uid}`, selectedChoice);
+                        state.hasVoted = true;
+                        state.votedChoice = selectedChoice;
+                    } else {
+                        // 測試模式下，每次投票後重新產生隨機 ID，這樣可以無限狂點而不被後端冷卻擋住
+                        state.testUid = 'TEST_' + state.uid + '_' + Math.floor(Math.random() * 999999);
+                    }
+                    
                     closeModal();
                     updateUI();
+                } else if (response.status === 429) {
+                    showMessage(state.lang === 'en' ? 'Please wait.' : '⏳ 系統繁忙，請稍後再試');
+                    btn.innerText = originalText;
+                    btn.disabled = false;
                 } else {
                     showMessage(`❌ ${result.error || '驗證失敗'}`);
                     btn.innerText = originalText;
