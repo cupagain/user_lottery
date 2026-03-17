@@ -641,67 +641,103 @@
             setTimeout(() => modal.style.display = 'none', 300);
         }
 
-async function submitVote() {
-    const btn = document.getElementById('confirm-btn');
-    const originalText = btn.innerText;
-    btn.innerText = state.lang === 'en' ? "Processing..." : "驗證中..."; 
-    btn.disabled = true;
-
-    try {
-        let response, result;
-
-        // 🛠 如果是測試模式，直接模擬 API 成功回傳 (不戳真實後端)
-        if (state.isTestMode) {
-            await new Promise(r => setTimeout(r, 400)); // 稍微延遲模擬連線感
-            response = { ok: true, status: 200 };
-            result = { success: true };
-        } else {
-            // 正式模式：打真實的 API
-            response = await fetch(CFG.handlerApi, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    user_id: state.uid, 
-                    username: state.username,
-                    action: 'VIP_LOTTERY_VOTE', 
-                    choice: selectedChoice
-                })
-            });
-            result = await response.json().catch(() => ({}));
-        }
-        
-        if (response.ok) {
-            showMessage(state.lang === 'en' ? 'Vote Successful!' : '投票成功！');
-            if (selectedChoice === 'A') state.realA++;
-            if (selectedChoice === 'B') state.realB++;
-            
-            if (!state.isTestMode) {
-                localStorage.setItem(`vip_vote_${state.uid}`, selectedChoice);
-                state.hasVoted = true;
-                state.votedChoice = selectedChoice;
-            } else {
-                // 測試模式下，不鎖定按鈕，允許無限狂點
-                state.testUid = 'TEST_' + state.uid + '_' + Math.floor(Math.random() * 999999);
+// ==========================================
+        // 【新增】設備 ID 產生器 (防禦機器人)
+        // ==========================================
+        function getDeviceId() {
+            let did = localStorage.getItem('vip_device_id');
+            if (!did) {
+                did = 'dev_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+                localStorage.setItem('vip_device_id', did);
             }
-            
-            closeModal();
-            updateUI();
-        } else if (response.status === 429) {
-            showMessage(state.lang === 'en' ? 'Please wait.' : '⏳ 系統繁忙，請稍後再試');
-            btn.innerText = originalText;
-            btn.disabled = false;
-        } else {
-            showMessage(`❌ ${result.error || '驗證失敗'}`);
-            btn.innerText = originalText;
-            btn.disabled = false;
-            closeModal();
+            return did;
         }
-    } catch (e) {
-        showMessage(state.lang === 'en' ? 'Network error.' : "連線不穩，請確認網路後重試！");
-        btn.innerText = originalText;
-        btn.disabled = false;
-    }
-}
+
+        // ==========================================
+        // 【新增】動態加密簽章產生器 (防偽造請求)
+        // ==========================================
+        async function generateSignature(uid, timestamp) {
+            const text = uid + timestamp + "VIP_SWAG_2026_SECRET_KEY"; // 必須與後端一致
+            const encoder = new TextEncoder();
+            const data = encoder.encode(text);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // ==========================================
+        // 【中轉驗證核心】送出投票邏輯 (加入安防機制 & 保留測試模式)
+        // ==========================================
+        async function submitVote() {
+            const btn = document.getElementById('confirm-btn');
+            const originalText = btn.innerText;
+            btn.innerText = state.lang === 'en' ? "Processing..." : "驗證中..."; 
+            btn.disabled = true;
+
+            try {
+                let response, result;
+
+                if (state.isTestMode) {
+                    // 🛠 測試模式：直接模擬 API 成功回傳 (不戳真實後端)
+                    await new Promise(r => setTimeout(r, 400)); // 稍微延遲模擬連線感
+                    response = { ok: true, status: 200 };
+                    result = { success: true };
+                } else {
+                    // 🛡️ 正式模式：準備安全參數並打真實 API
+                    const currentTimestamp = Date.now().toString();
+                    const secureSignature = await generateSignature(state.testUid, currentTimestamp);
+                    const deviceId = getDeviceId();
+
+                    response = await fetch(CFG.handlerApi, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            user_id: state.testUid,
+                            username: state.username,
+                            action: 'VIP_LOTTERY_VOTE', 
+                            choice: selectedChoice,
+                            timestamp: currentTimestamp,   // 安全參數: 時間
+                            signature: secureSignature,    // 安全參數: 簽章
+                            device_id: deviceId            // 安全參數: 設備識別碼
+                        })
+                    });
+                    result = await response.json().catch(() => ({}));
+                }
+                
+                if (response.ok) {
+                    showMessage(state.lang === 'en' ? 'Vote Successful!' : '投票成功！');
+                    if (selectedChoice === 'A') state.realA++;
+                    if (selectedChoice === 'B') state.realB++;
+                    
+                    if (!state.isTestMode) {
+                        // 正式模式：鎖定投票資格
+                        localStorage.setItem(`vip_vote_${state.uid}`, selectedChoice);
+                        state.hasVoted = true;
+                        state.votedChoice = selectedChoice;
+                    } else {
+                        // 測試模式：更新假 UID，允許無限次點擊
+                        state.testUid = 'TEST_' + state.uid + '_' + Math.floor(Math.random() * 999999);
+                    }
+                    
+                    closeModal();
+                    updateUI();
+                } else if (response.status === 429) {
+                    // 速度過快或冷卻中
+                    showMessage(state.lang === 'en' ? 'Voting too fast, please wait.' : '⏳ 操作過於頻繁，請等待3秒後再試');
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                } else {
+                    showMessage(`❌ ${result.error || '驗證失敗'}`);
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    closeModal();
+                }
+            } catch (e) {
+                showMessage(state.lang === 'en' ? 'Network error.' : "連線不穩，請確認網路後重試！");
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
 
         window.addEventListener('DOMContentLoaded', initApp);
         window.addEventListener('resize', updateChartOnly);
