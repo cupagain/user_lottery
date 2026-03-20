@@ -835,7 +835,7 @@
                     result = await response.json().catch(() => ({}));
                 }
                 
-                if (response.ok) {
+            if (response.ok) {
                     showMessage(state.lang === 'en' ? 'Vote Successful!' : '投票成功！');
                     if (selectedChoice === 'A') state.realA++;
                     if (selectedChoice === 'B') state.realB++;
@@ -847,6 +847,10 @@
                     } else {
                         state.testUid = 'TEST_' + state.uid + '_' + Math.floor(Math.random() * 999999);
                     }
+                    
+                    // 👉 關鍵修復：成功後必須把彈窗的按鈕恢復原狀，才能無限次點擊！
+                    btn.innerText = originalText;
+                    btn.disabled = false;
                     
                     closeModal();
                     updateUI();
