@@ -809,14 +809,8 @@
             try {
                 let response, result;
 
-                if (state.isTestMode) {
-                    if (inputUsername.toLowerCase() !== state.mockUsername.toLowerCase()) {
-                        showMessage(state.lang === 'en' ? "❌ Verification failed" : "❌ 帳號驗證失敗，非本人操作");
-                        btn.innerText = originalText;
-                        btn.disabled = false;
-                        return; 
-                    }
-
+               if (state.isTestMode) {
+                    // 🛠 測試模式下：拔除名稱限制，輸入任何字串都直接模擬成功
                     await new Promise(r => setTimeout(r, 400)); 
                     response = { ok: true, status: 200 };
                     result = { success: true };
