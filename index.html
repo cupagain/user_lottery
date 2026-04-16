@@ -453,7 +453,7 @@
         </footer>
     </div>
 
-    <script>
+<script>
         /* ══════════════════════════════════════════════
          * CONFIG & STATE
          * ══════════════════════════════════════════════ */
@@ -464,10 +464,10 @@
         const EVENT_WINNERS = ["ericli"];
         const EVENT_PARTICIPANTS =["User1", "User2", "User3", "Gamer99", "LuckyStar"];
         
-        // BFF 核心設定
+        // 🚨 修正 API 端點
         const CFG = {
             statsApi: 'https://swag-bff-api-905468082258.asia-east1.run.app/api/stats',
-            voteApi:  'https://swag-bff-api-905468082258.asia-east1.run.app/api/vote'
+            requestApi: 'https://swag-bff-api-905468082258.asia-east1.run.app/api/request' // 改回 request
         };
         const POLL_INTERVAL = 15000;
         
@@ -522,9 +522,8 @@
             }
         };
 
-        function showMessage(msg) { const el=document.getElementById('customMsg'); el.innerText=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2500); }
+        function showMessage(msg) { const el=document.getElementById('customMsg'); el.innerText=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),3000); }
 
-        /* PWA 跨視窗導航攔截機制 */
         function setupPwaLinkInterceptor() {
             if(window.self !== window.top) {
                 document.addEventListener('click', function(e) {
@@ -547,69 +546,43 @@
             });
         }
 
-        /* ══════════════════════════════════════════════
-         * 強化版: SWAG Iframe Handshake Protocol
-         * ══════════════════════════════════════════════ */
         function sendIframeReady() {
             const msg = { type: 'IFRAME_READY', action: 'IFRAME_READY' };
-            // 同時發送 Object 與 String 兩種格式，兼容不同版本的主站包裝
             window.parent.postMessage(msg, '*');
             window.parent.postMessage(JSON.stringify(msg), '*');
         }
 
-        /* 接收父層訊息 */
         window.addEventListener('message', function(event) {
             let data = event.data;
             if (!data) return;
+            if (typeof data === 'string') { try { data = JSON.parse(data); } catch(e) { return; } }
 
-            // 1. 容錯處理：若收到的訊息是字串，嘗試解析為 JSON
-            if (typeof data === 'string') {
-                try { 
-                    data = JSON.parse(data); 
-                } catch(e) { 
-                    return; // 非 JSON 字串，忽略
-                }
-            }
-
-            // 2. 畫面上顯示除錯訊息 (如果還沒授權的話)
-            // 這能讓我們立刻知道主站到底有沒有回傳訊息！
             const dbgEl = document.getElementById('unauth-info');
             if (dbgEl && !state.isAuthenticated) {
                 const msgType = data.type || data.event || 'Unknown';
-                if (msgType !== 'Unknown') {
-                    dbgEl.innerText = `等待授權中... (${msgType})`;
-                }
+                if (msgType !== 'Unknown') dbgEl.innerText = `等待授權中... (${msgType})`;
             }
 
-            // 3. 兼容 type 或 event 兩種命名
             const msgType = data.type || data.event;
-
             if (msgType === 'SET_TOKEN') {
-                // 兼容不同位置的 token
                 const token = data.token || (data.payload && data.payload.token);
-                if (!token) {
-                    if (dbgEl) dbgEl.innerText = '錯誤: 收到 SET_TOKEN 但沒有 token 值';
-                    return;
-                }
-
-                if (authToken === token) return; // 防重複觸發
-                authToken = token;
+                if (!token) return;
+                if (authToken === token) return; 
                 
-                // 停止重試與 Dev Mode 倒數計時
+                authToken = token;
                 if (iframeReadyInterval) clearInterval(iframeReadyInterval);
                 if (devModeTimeout) clearTimeout(devModeTimeout);
 
                 state.isTestMode = false;
-                fetchRealData(); // 拿到 Token，開始呼叫 BFF API
+                fetchRealData(); 
             }
         });
-        /* 初始化核心流程 */
+
         function initApp() {
             changeLang('zh-TW'); 
             setupModalBackdropClose();
             setupPwaLinkInterceptor();
 
-            // 若在 iframe 中，執行 3-Way Handshake
             if (window.self !== window.top) {
                 setTimeout(() => {
                     sendIframeReady();
@@ -617,42 +590,34 @@
                 }, 100);
             }
 
-            // Dev Mode 防呆檢測 (獨立視窗開啟時)
             if (window.self === window.top) {
-                devModeTimeout = setTimeout(() => {
-                    if (!authToken) {
-                        enableDevMode();
-                    }
-                }, 2000);
+                devModeTimeout = setTimeout(() => { if (!authToken) enableDevMode(); }, 2000);
             }
-            
-            updateUI(); // 初始渲染 (未授權狀態)
+            updateUI(); 
         }
 
-        /* 啟用本地開發/預覽防呆模式 */
         function enableDevMode() {
-            state.isTestMode = true;
-            state.isAuthenticated = true;
-            state.level = 99; // 假裝 VIP 滿等
-            state.realA = 1530;
-            state.realB = 1420;
+            state.isTestMode = true; state.isAuthenticated = true; state.level = 99; 
+            state.realA = 1530; state.realB = 1420;
             document.getElementById('user-level').innerText = state.level;
-            
-            // 降下強制防呆橫幅
             document.getElementById('dev-mode-banner').style.display = 'block';
-            document.body.style.paddingTop = '60px'; // 推擠內容避免被遮擋
-            
+            document.body.style.paddingTop = '60px'; 
             updateUI();
         }
 
-        /* 向 BFF 取得真實資料 (帶入 Token) */
+        /* 🚨 新增完整的錯誤處理與除錯訊息 */
         async function fetchRealData() {
-            state.isAuthenticated = true;
+            state.isAuthenticated = true; // 先設為已授權，解除未登入畫面
             try {
-                const res = await fetch(CFG.statsApi, {
+                const response = await fetch(CFG.statsApi, {
                     headers: { 'Authorization': `Bearer ${authToken}` }
-                }).then(r => r.json());
-
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const res = await response.json();
                 if (res) {
                     state.level = res.level || 0;
                     document.getElementById('user-level').innerText = state.level;
@@ -664,7 +629,10 @@
                     state.realB = res.totalB || 0;
                 }
             } catch(e) {
-                document.getElementById('user-level').innerText = '--';
+                console.error("API Error:", e);
+                document.getElementById('user-level').innerText = '錯誤';
+                // 顯示出錯原因，方便除錯
+                showMessage(`資料載入失敗: ${e.message}`);
             }
             updateUI();
             startPolling();
@@ -675,26 +643,14 @@
             if(!state.isEventActive || state.isTestMode || !authToken) return;
             pollTimer = setInterval(async() => {
                 try {
-                    const res = await fetch(CFG.statsApi, {
-                        headers: { 'Authorization': `Bearer ${authToken}` }
-                    }).then(r => r.json());
-                    if(res) {
-                        state.realA = res.totalA || 0;
-                        state.realB = res.totalB || 0;
-                        updateChartOnly();
-                    }
+                    const res = await fetch(CFG.statsApi, { headers: { 'Authorization': `Bearer ${authToken}` } }).then(r => r.json());
+                    if(res) { state.realA = res.totalA || 0; state.realB = res.totalB || 0; updateChartOnly(); }
                 } catch(e){}
             }, POLL_INTERVAL);
         }
 
         function checkEventTime(){const now=new Date();state.isEventActive=(now>=EVENT_CONFIG.start&&now<=EVENT_CONFIG.end);}
-
-        function renderStatus(type,text){
-            const el=document.getElementById('user-status');
-            el.className='status-badge status-'+type;
-            el.style.display='inline-block'; 
-            el.innerText=text;
-        }
+        function renderStatus(type,text){ const el=document.getElementById('user-status'); el.className='status-badge status-'+type; el.style.display='inline-block'; el.innerText=text; }
 
         function changeLang(lang){
             state.lang=lang; const d=i18n[lang]||i18n['zh-TW'];
@@ -749,43 +705,36 @@
             if(!state.isAuthenticated){
                 document.getElementById('auth-info').style.display='none';
                 document.getElementById('unauth-info').style.display='block';
-                updateChartOnly();
-                return;
+                updateChartOnly(); return;
             }
             
             document.getElementById('auth-info').style.display='flex';
             document.getElementById('unauth-info').style.display='none';
 
             const d=i18n[state.lang],btnA=document.getElementById('btn-vote-a'),btnB=document.getElementById('btn-vote-b'),upgWrap=document.getElementById('upgrade-wrapper'),statusBadge=document.getElementById('user-status');
-            
             statusBadge.style.display='none'; upgWrap.style.display='none';
             
             if(state.isTestMode){
                 renderStatus('eligible', d.statusEligible); 
                 btnA.disabled=btnB.disabled=false;
-                btnA.classList.remove('btn-locked','btn-active-voted');
-                btnB.classList.remove('btn-locked','btn-active-voted');
+                btnA.classList.remove('btn-locked','btn-active-voted'); btnB.classList.remove('btn-locked','btn-active-voted');
             }
             else{
                 if(state.level<20&&!state.hasVoted){upgWrap.style.display='block';}
-                
                 if(state.hasVoted){
                     renderStatus('voted',d.statusVoted);
                     btnA.disabled=btnB.disabled=true;
-                    btnA.className='btn-premium btn-a-red btn-locked';
-                    btnB.className='btn-premium btn-b-blue btn-locked';
+                    btnA.className='btn-premium btn-a-red btn-locked'; btnB.className='btn-premium btn-b-blue btn-locked';
                     if(state.votedChoice==='A')btnA.classList.add('btn-active-voted');else btnB.classList.add('btn-active-voted');
                 }
                 else if(state.isEventActive&&state.level>=20){
                     renderStatus('eligible',d.statusEligible);
                     btnA.disabled=btnB.disabled=false;
-                    btnA.classList.remove('btn-locked');
-                    btnB.classList.remove('btn-locked');
+                    btnA.classList.remove('btn-locked'); btnB.classList.remove('btn-locked');
                 }
                 else{
                     btnA.disabled=btnB.disabled=true;
-                    btnA.classList.add('btn-locked');
-                    btnB.classList.add('btn-locked');
+                    btnA.classList.add('btn-locked'); btnB.classList.add('btn-locked');
                 }
             }
             updateChartOnly();
@@ -820,7 +769,7 @@
         function openIphoneModal(){const m=document.getElementById('iphoneModal');m.style.display='flex';setTimeout(()=>m.classList.add('show'),10);}
         function closeIphoneModal(){const m=document.getElementById('iphoneModal');m.classList.remove('show');setTimeout(()=>m.style.display='none',300);}
 
-        /* 提交投票 (透過 BFF API) */
+        /* 🚨 提交投票 (改為呼叫 /api/request 並帶上 action) */
         async function submitVote(){
             const btn = document.getElementById('confirm-btn');
             const ot = btn.innerText;
@@ -837,14 +786,14 @@
                     response = { ok: true, status: 200 };
                     result = { success: true };
                 } else {
-                    // 以 Bearer Token 安全呼叫 BFF API 進行投票
-                    response = await fetch(CFG.voteApi, {
+                    response = await fetch(CFG.requestApi, {
                         method: 'POST',
                         headers: { 
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${authToken}`
                         },
                         body: JSON.stringify({
+                            action: 'VIP_LOTTERY_VOTE', // 加上 action 供後端識別
                             input_username: inp,
                             choice: selectedChoice
                         })
@@ -870,7 +819,7 @@
                     btn.innerText = ot; btn.disabled = false;
                 }
             } catch(e) {
-                showMessage(state.lang==='en'?'Network error.':'連線不穩，請確認網路後重試！');
+                showMessage(`網路錯誤: ${e.message}`);
                 btn.innerText = ot; btn.disabled = false;
             }
         }
