@@ -547,28 +547,62 @@
             });
         }
 
+        /* ══════════════════════════════════════════════
+         * 強化版: SWAG Iframe Handshake Protocol
+         * ══════════════════════════════════════════════ */
         function sendIframeReady() {
-            window.parent.postMessage({ type: 'IFRAME_READY' }, '*');
+            const msg = { type: 'IFRAME_READY', action: 'IFRAME_READY' };
+            // 同時發送 Object 與 String 兩種格式，兼容不同版本的主站包裝
+            window.parent.postMessage(msg, '*');
+            window.parent.postMessage(JSON.stringify(msg), '*');
         }
 
-        /* 接收父層訊息 (SWAG Iframe Handshake Protocol) */
+        /* 接收父層訊息 */
         window.addEventListener('message', function(event) {
-            const data = event.data;
+            let data = event.data;
             if (!data) return;
 
-            if (data.type === 'SET_TOKEN') {
-                if (authToken === data.token) return; // 防重複觸發
-                authToken = data.token;
+            // 1. 容錯處理：若收到的訊息是字串，嘗試解析為 JSON
+            if (typeof data === 'string') {
+                try { 
+                    data = JSON.parse(data); 
+                } catch(e) { 
+                    return; // 非 JSON 字串，忽略
+                }
+            }
+
+            // 2. 畫面上顯示除錯訊息 (如果還沒授權的話)
+            // 這能讓我們立刻知道主站到底有沒有回傳訊息！
+            const dbgEl = document.getElementById('unauth-info');
+            if (dbgEl && !state.isAuthenticated) {
+                const msgType = data.type || data.event || 'Unknown';
+                if (msgType !== 'Unknown') {
+                    dbgEl.innerText = `等待授權中... (${msgType})`;
+                }
+            }
+
+            // 3. 兼容 type 或 event 兩種命名
+            const msgType = data.type || data.event;
+
+            if (msgType === 'SET_TOKEN') {
+                // 兼容不同位置的 token
+                const token = data.token || (data.payload && data.payload.token);
+                if (!token) {
+                    if (dbgEl) dbgEl.innerText = '錯誤: 收到 SET_TOKEN 但沒有 token 值';
+                    return;
+                }
+
+                if (authToken === token) return; // 防重複觸發
+                authToken = token;
                 
                 // 停止重試與 Dev Mode 倒數計時
                 if (iframeReadyInterval) clearInterval(iframeReadyInterval);
                 if (devModeTimeout) clearTimeout(devModeTimeout);
 
                 state.isTestMode = false;
-                fetchRealData();
+                fetchRealData(); // 拿到 Token，開始呼叫 BFF API
             }
         });
-
         /* 初始化核心流程 */
         function initApp() {
             changeLang('zh-TW'); 
