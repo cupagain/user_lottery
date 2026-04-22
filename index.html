@@ -583,19 +583,24 @@
     <div id="customMsg">系統訊息</div>
 
     <div id="iphoneModal" class="modal-overlay">
-        <div class="modal-content" style="border-width:2px; background: radial-gradient(circle at 50% 30%, #1a1508 0%, #050505 80%);">
-            <h2 id="i18n-hp-modal-title" class="modal-title">隱藏大獎</h2>
-            <img src="https://public.swag.live/notifications/custom/EL/iphone_17.png" class="iphone-modal-img" alt="iPhone 17 Pro" referrerpolicy="no-referrer">
-            <div id="i18n-hp-modal-desc" class="iphone-modal-desc">
-                <p>當最終票數平手時觸發</p>
-                <p class="highlight">全體抽出 iPhone 17 Pro</p>
+    <div class="modal-content" style="border-width:2px; background: radial-gradient(circle at 50% 30%, #1a1508 0%, #050505 80%);">
+        <h2 id="i18n-hp-modal-title" class="modal-title">隱藏大獎</h2>
+        <img src="https://public.swag.live/notifications/custom/EL/iphone_17.png" class="iphone-modal-img" alt="iPhone 17 Pro" referrerpolicy="no-referrer">
+        <div id="i18n-hp-modal-desc" class="iphone-modal-desc">
+            <p>當最終票數平手時觸發</p>
+            <p class="highlight">全體抽出 iPhone 17 Pro</p>
+        </div>
+
+        <!-- ★ 修正：qty tag 與市價合併成一組，垂直排列 ★ -->
+        <div style="display:flex; flex-direction:column; align-items:center; gap:var(--sp-2); margin-bottom:var(--sp-5);">
+            <span id="i18n-hp-qty" class="prize-qty-tag">僅抽出 1 名</span>
+            <div id="i18n-hp-price" class="prize-price-tag">
+                <span class="price-unit">NT$</span><span class="price-value">36,900</span>
             </div>
-            <div style="margin-bottom:var(--sp-5)"><span id="i18n-hp-qty" class="prize-qty-tag">僅抽出 1 名</span></div>
-            <p id="i18n-hp-modal-note" class="iphone-modal-note">※ 觸發時原定獎項取消</p>
-            <div id="i18n-hp-price" class="prize-price-tag" style="margin-top: var(--sp-3);">
-    <span class="price-unit">NT$</span><span class="price-value">36,900</span>
-</div>
-<button onclick="closeIphoneModal()" class="modal-btn-outline-gold" id="i18n-btn-close">關閉</button>
+        </div>
+
+        <p id="i18n-hp-modal-note" class="iphone-modal-note">※ 觸發時原定獎項取消</p>
+        <button onclick="closeIphoneModal()" class="modal-btn-outline-gold" id="i18n-btn-close">關閉</button>
     </div>
 </div>
     <div id="participantModal" class="modal-overlay">
@@ -644,7 +649,7 @@
     <div class="prize-cell">
         <div class="img-container">
             <div class="bg-glow"></div>
-            <img src="https://public.swag.live/notifications/custom/EL/switch2.webp" class="img-switch" alt="Switch 2" referrerpolicy="no-referrer">
+            <img src="https://public.swag.live/notifications/custom/EL/switch2.png" class="img-switch" alt="Switch 2" referrerpolicy="no-referrer">
         </div>
         <p id="i18n-prize-a" class="prize-title">Switch 2</p>
         <span id="i18n-prize-a-qty" class="prize-qty-tag">僅抽出 1 名</span>
